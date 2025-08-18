@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SuccessMash - Test Page</title>
+    <title>More Cracked or Less Cracked - Test Page</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -44,7 +44,7 @@
     </style>
 </head>
 <body>
-    <h1>SuccessMash - Test Page</h1>
+    <h1>More Cracked or Less Cracked - Test Page</h1>
     
     <div class="test-section">
         <h2>Application Status</h2>
@@ -93,13 +93,13 @@
 
         function testAppStatus() {
             try {
-                if (window.successMash) {
-                    logResult('app-status', '✅ SuccessMash application is loaded and running', 'success');
+                if (window.crackedComparison) {
+                    logResult('app-status', '✅ More Cracked or Less Cracked application is loaded and running', 'success');
                     
-                    const debugInfo = window.successMash.getDebugInfo();
+                    const debugInfo = window.crackedComparison.getDebugInfo();
                     logResult('app-status', `📊 Profiles: ${debugInfo.profiles}, Votes: ${debugInfo.votes}, Comparisons: ${debugInfo.stats.comparisonsMade}`, 'info');
                 } else {
-                    logResult('app-status', '❌ SuccessMash application not found. Please open index.html first.', 'error');
+                    logResult('app-status', '❌ More Cracked or Less Cracked application not found. Please open index.html first.', 'error');
                 }
             } catch (error) {
                 logResult('app-status', `❌ Error testing app status: ${error.message}`, 'error');
@@ -108,15 +108,15 @@
 
         function testDataManagement() {
             try {
-                if (!window.successMash) {
-                    logResult('data-result', '❌ SuccessMash not loaded', 'error');
+                if (!window.crackedComparison) {
+                    logResult('data-result', '❌ More Cracked or Less Cracked not loaded', 'error');
                     return;
                 }
 
                 // Test localStorage
-                const profiles = localStorage.getItem('successMash_profiles');
-                const votes = localStorage.getItem('successMash_votes');
-                const stats = localStorage.getItem('successMash_stats');
+                const profiles = localStorage.getItem('crackedComparison_profiles');
+                const votes = localStorage.getItem('crackedComparison_votes');
+                const stats = localStorage.getItem('crackedComparison_stats');
 
                 logResult('data-result', `📁 localStorage check:`, 'info');
                 logResult('data-result', `   Profiles: ${profiles ? '✅ Found' : '❌ Missing'}`, profiles ? 'success' : 'error');
@@ -139,10 +139,10 @@
                 localStorage.clear();
                 logResult('data-result', '🗑️ All data cleared from localStorage', 'success');
                 
-                if (window.successMash) {
-                    window.successMash.profiles = [];
-                    window.successMash.votes = [];
-                    window.successMash.stats = { totalVotes: 0, comparisonsMade: 0 };
+                if (window.crackedComparison) {
+                    window.crackedComparison.profiles = [];
+                    window.crackedComparison.votes = [];
+                    window.crackedComparison.stats = { totalVotes: 0, comparisonsMade: 0 };
                     logResult('data-result', '🔄 Application data reset', 'success');
                 }
             } catch (error) {
@@ -152,11 +152,11 @@
 
         function exportTestData() {
             try {
-                if (window.successMash) {
-                    window.successMash.exportData();
+                if (window.crackedComparison) {
+                    window.crackedComparison.exportData();
                     logResult('data-result', '📤 Test data exported successfully', 'success');
                 } else {
-                    logResult('data-result', '❌ SuccessMash not loaded', 'error');
+                    logResult('data-result', '❌ More Cracked or Less Cracked not loaded', 'error');
                 }
             } catch (error) {
                 logResult('data-result', `❌ Error exporting data: ${error.message}`, 'error');
@@ -165,18 +165,18 @@
 
         function testVoting() {
             try {
-                if (!window.successMash) {
-                    logResult('voting-result', '❌ SuccessMash not loaded', 'error');
+                if (!window.crackedComparison) {
+                    logResult('voting-result', '❌ More Cracked or Less Cracked not loaded', 'error');
                     return;
                 }
 
-                const initialVotes = window.successMash.votes.length;
-                const initialStats = { ...window.successMash.stats };
+                const initialVotes = window.crackedComparison.votes.length;
+                const initialStats = { ...window.crackedComparison.stats };
 
                 // Simulate a vote
-                if (window.successMash.currentComparison) {
-                    const winner = window.successMash.currentComparison.left;
-                    const loser = window.successMash.currentComparison.right;
+                if (window.crackedComparison.currentComparison) {
+                    const winner = window.crackedComparison.currentComparison.left;
+                    const loser = window.crackedComparison.currentComparison.right;
                     
                     logResult('voting-result', `🎯 Testing vote: ${winner.name} vs ${loser.name}`, 'info');
                     
@@ -184,12 +184,12 @@
                     winner.wins++;
                     winner.totalVotes++;
                     loser.totalVotes++;
-                    window.successMash.stats.totalVotes++;
-                    window.successMash.stats.comparisonsMade++;
+                    window.crackedComparison.stats.totalVotes++;
+                    window.crackedComparison.stats.comparisonsMade++;
                     
                     logResult('voting-result', `✅ Vote simulated successfully`, 'success');
-                    logResult('voting-result', `   Votes increased: ${initialVotes} → ${window.successMash.votes.length + 1}`, 'info');
-                    logResult('voting-result', `   Total votes: ${initialStats.totalVotes} → ${window.successMash.stats.totalVotes}`, 'info');
+                    logResult('voting-result', `   Votes increased: ${initialVotes} → ${window.crackedComparison.votes.length + 1}`, 'info');
+                    logResult('voting-result', `   Total votes: ${initialStats.totalVotes} → ${window.crackedComparison.stats.totalVotes}`, 'info');
                 } else {
                     logResult('voting-result', '⚠️ No current comparison available', 'error');
                 }
@@ -201,12 +201,12 @@
 
         function showDebugInfo() {
             try {
-                if (window.successMash) {
-                    const debugInfo = window.successMash.getDebugInfo();
+                if (window.crackedComparison) {
+                    const debugInfo = window.crackedComparison.getDebugInfo();
                     logResult('debug-result', '🔍 Debug Information:', 'info');
                     logResult('debug-result', JSON.stringify(debugInfo, null, 2), 'info');
                 } else {
-                    logResult('debug-result', '❌ SuccessMash not loaded', 'error');
+                    logResult('debug-result', '❌ More Cracked or Less Cracked not loaded', 'error');
                 }
             } catch (error) {
                 logResult('debug-result', `❌ Error showing debug info: ${error.message}`, 'error');
@@ -215,7 +215,7 @@
 
         function showLogs() {
             try {
-                const logs = JSON.parse(localStorage.getItem('successMash_logs') || '[]');
+                const logs = JSON.parse(localStorage.getItem('crackedComparison_logs') || '[]');
                 logResult('debug-result', `📝 Logs (${logs.length} entries):`, 'info');
                 
                 if (logs.length > 0) {
@@ -233,7 +233,7 @@
 
         function showErrors() {
             try {
-                const errors = JSON.parse(localStorage.getItem('successMash_errors') || '[]');
+                const errors = JSON.parse(localStorage.getItem('crackedComparison_errors') || '[]');
                 logResult('debug-result', `🚨 Errors (${errors.length} entries):`, 'info');
                 
                 if (errors.length > 0) {

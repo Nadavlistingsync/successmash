@@ -1,7 +1,7 @@
-// SuccessMash Application - Professional Achievement Comparison Game
+// More Cracked or Less Cracked Application - Achievement Comparison Game
 // Automatic feedback loop integrated for debugging
 
-class SuccessMash {
+class CrackedComparison {
     constructor() {
         this.profiles = [];
         this.currentComparison = null;
@@ -22,7 +22,7 @@ class SuccessMash {
         this.loadMockData();
         this.startNewComparison();
         this.updateStats();
-        this.log('Application initialized successfully', 'info');
+        this.log('More Cracked or Less Cracked initialized successfully', 'info');
     }
 
     // Automatic feedback loop for debugging
@@ -42,7 +42,7 @@ class SuccessMash {
         console.log(`[${timestamp}] [${level.toUpperCase()}] ${message}`, data || '');
         
         // Store logs in localStorage for debugging
-        const logs = JSON.parse(localStorage.getItem('successMash_logs') || '[]');
+        const logs = JSON.parse(localStorage.getItem('crackedComparison_logs') || '[]');
         logs.push(logEntry);
         
         // Keep only last 100 logs
@@ -50,7 +50,7 @@ class SuccessMash {
             logs.splice(0, logs.length - 100);
         }
         
-        localStorage.setItem('successMash_logs', JSON.stringify(logs));
+        localStorage.setItem('crackedComparison_logs', JSON.stringify(logs));
         
         // Auto-detect and report errors
         if (level === 'error') {
@@ -64,17 +64,17 @@ class SuccessMash {
         console.error('Error detected:', errorLog);
         
         // Store error for debugging
-        const errors = JSON.parse(localStorage.getItem('successMash_errors') || '[]');
+        const errors = JSON.parse(localStorage.getItem('crackedComparison_errors') || '[]');
         errors.push(errorLog);
-        localStorage.setItem('successMash_errors', JSON.stringify(errors));
+        localStorage.setItem('crackedComparison_errors', JSON.stringify(errors));
     }
 
     // Load data from localStorage
     loadData() {
         try {
-            this.profiles = JSON.parse(localStorage.getItem('successMash_profiles') || '[]');
-            this.votes = JSON.parse(localStorage.getItem('successMash_votes') || '[]');
-            this.stats = JSON.parse(localStorage.getItem('successMash_stats') || JSON.stringify(this.stats));
+            this.profiles = JSON.parse(localStorage.getItem('crackedComparison_profiles') || '[]');
+            this.votes = JSON.parse(localStorage.getItem('crackedComparison_votes') || '[]');
+            this.stats = JSON.parse(localStorage.getItem('crackedComparison_stats') || JSON.stringify(this.stats));
             this.log('Data loaded from localStorage', 'info', { profiles: this.profiles.length, votes: this.votes.length });
         } catch (error) {
             this.log('Error loading data from localStorage', 'error', error);
@@ -86,9 +86,9 @@ class SuccessMash {
     // Save data to localStorage
     saveData() {
         try {
-            localStorage.setItem('successMash_profiles', JSON.stringify(this.profiles));
-            localStorage.setItem('successMash_votes', JSON.stringify(this.votes));
-            localStorage.setItem('successMash_stats', JSON.stringify(this.stats));
+                    localStorage.setItem('crackedComparison_profiles', JSON.stringify(this.profiles));
+        localStorage.setItem('crackedComparison_votes', JSON.stringify(this.votes));
+        localStorage.setItem('crackedComparison_stats', JSON.stringify(this.stats));
             this.log('Data saved to localStorage', 'info');
         } catch (error) {
             this.log('Error saving data to localStorage', 'error', error);
@@ -103,6 +103,7 @@ class SuccessMash {
                     id: 1,
                     name: "Sarah Chen",
                     title: "Senior Software Engineer",
+                    university: "Stanford University",
                     company: "Google",
                     experience: 8,
                     imageUrl: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
@@ -116,12 +117,13 @@ class SuccessMash {
                     industry: "technology",
                     wins: 0,
                     totalVotes: 0,
-                    successScore: 0
+                    crackedScore: 0
                 },
                 {
                     id: 2,
                     name: "Marcus Rodriguez",
                     title: "Product Manager",
+                    university: "Harvard University",
                     company: "Netflix",
                     experience: 6,
                     imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
@@ -135,12 +137,13 @@ class SuccessMash {
                     industry: "business",
                     wins: 0,
                     totalVotes: 0,
-                    successScore: 0
+                    crackedScore: 0
                 },
                 {
                     id: 3,
                     name: "Emily Watson",
                     title: "Data Scientist",
+                    university: "MIT",
                     company: "Meta",
                     experience: 4,
                     imageUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
@@ -154,12 +157,13 @@ class SuccessMash {
                     industry: "technology",
                     wins: 0,
                     totalVotes: 0,
-                    successScore: 0
+                    crackedScore: 0
                 },
                 {
                     id: 4,
                     name: "David Kim",
                     title: "Investment Banker",
+                    university: "University of Pennsylvania (Wharton)",
                     company: "Goldman Sachs",
                     experience: 7,
                     imageUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
@@ -173,12 +177,13 @@ class SuccessMash {
                     industry: "finance",
                     wins: 0,
                     totalVotes: 0,
-                    successScore: 0
+                    crackedScore: 0
                 },
                 {
                     id: 5,
                     name: "Alex Johnson",
                     title: "Creative Director",
+                    university: "Parsons School of Design",
                     company: "Apple",
                     experience: 10,
                     imageUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
@@ -192,12 +197,13 @@ class SuccessMash {
                     industry: "creative",
                     wins: 0,
                     totalVotes: 0,
-                    successScore: 0
+                    crackedScore: 0
                 },
                 {
                     id: 6,
                     name: "Priya Patel",
                     title: "Medical Director",
+                    university: "Johns Hopkins University",
                     company: "Mayo Clinic",
                     experience: 12,
                     imageUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face",
@@ -211,7 +217,7 @@ class SuccessMash {
                     industry: "healthcare",
                     wins: 0,
                     totalVotes: 0,
-                    successScore: 0
+                    crackedScore: 0
                 }
             ];
             this.saveData();
@@ -320,6 +326,7 @@ class SuccessMash {
         const imageElement = document.getElementById(`${side}-image`);
         const nameElement = document.getElementById(`${side}-name`);
         const titleElement = document.getElementById(`${side}-title`);
+        const universityElement = document.getElementById(`${side}-university`);
         const companyElement = document.getElementById(`${side}-company`);
         const experienceElement = document.getElementById(`${side}-experience`);
         const achievementsElement = document.getElementById(`${side}-achievements`);
@@ -337,6 +344,7 @@ class SuccessMash {
         // Update text content
         nameElement.textContent = candidate.name;
         titleElement.textContent = candidate.title;
+        universityElement.textContent = candidate.university || 'University not specified';
         companyElement.textContent = candidate.company;
         experienceElement.textContent = candidate.experience;
 
@@ -371,10 +379,10 @@ class SuccessMash {
         // Update profiles
         winner.wins++;
         winner.totalVotes++;
-        winner.successScore = this.calculateSuccessScore(winner);
+        winner.crackedScore = this.calculateCrackedScore(winner);
         
         loser.totalVotes++;
-        loser.successScore = this.calculateSuccessScore(loser);
+        loser.crackedScore = this.calculateCrackedScore(loser);
 
         // Update stats
         this.stats.totalVotes++;
@@ -397,8 +405,8 @@ class SuccessMash {
         }, 2000);
     }
 
-    // Calculate success score
-    calculateSuccessScore(profile) {
+    // Calculate cracked score
+    calculateCrackedScore(profile) {
         const winRate = profile.totalVotes > 0 ? profile.wins / profile.totalVotes : 0;
         const experienceBonus = Math.min(profile.experience * 0.1, 1);
         const achievementBonus = Math.min(profile.achievements.length * 0.05, 0.5);
@@ -427,8 +435,8 @@ class SuccessMash {
         const leaderboardList = document.getElementById('leaderboard-list');
         leaderboardList.innerHTML = '';
 
-        // Sort profiles by success score
-        const sortedProfiles = [...this.profiles].sort((a, b) => b.successScore - a.successScore);
+        // Sort profiles by cracked score
+        const sortedProfiles = [...this.profiles].sort((a, b) => b.crackedScore - a.crackedScore);
 
         sortedProfiles.forEach((profile, index) => {
             const item = document.createElement('div');
@@ -436,7 +444,7 @@ class SuccessMash {
             item.innerHTML = `
                 <span class="rank">${index + 1}</span>
                 <span class="name">${profile.name}</span>
-                <span class="score">${profile.successScore}</span>
+                <span class="score">${profile.crackedScore}</span>
                 <span class="wins">${profile.wins}</span>
                 <span class="total-votes">${profile.totalVotes}</span>
             `;
@@ -455,6 +463,7 @@ class SuccessMash {
             id: Date.now(),
             name: formData.get('name'),
             title: formData.get('title'),
+            university: formData.get('university'),
             company: formData.get('company'),
             experience: parseInt(formData.get('experience')),
             imageUrl: formData.get('imageUrl') || '',
@@ -462,7 +471,7 @@ class SuccessMash {
             industry: formData.get('industry'),
             wins: 0,
             totalVotes: 0,
-            successScore: 0
+            crackedScore: 0
         };
 
         // Validate profile
@@ -491,9 +500,9 @@ class SuccessMash {
             stats: this.stats,
             currentComparison: this.currentComparison,
             localStorage: {
-                profiles: localStorage.getItem('successMash_profiles') ? 'exists' : 'missing',
-                votes: localStorage.getItem('successMash_votes') ? 'exists' : 'missing',
-                stats: localStorage.getItem('successMash_stats') ? 'exists' : 'missing'
+                profiles: localStorage.getItem('crackedComparison_profiles') ? 'exists' : 'missing',
+                votes: localStorage.getItem('crackedComparison_votes') ? 'exists' : 'missing',
+                stats: localStorage.getItem('crackedComparison_stats') ? 'exists' : 'missing'
             }
         };
     }
@@ -505,15 +514,15 @@ class SuccessMash {
             votes: this.votes,
             stats: this.stats,
             debugInfo: this.getDebugInfo(),
-            logs: JSON.parse(localStorage.getItem('successMash_logs') || '[]'),
-            errors: JSON.parse(localStorage.getItem('successMash_errors') || '[]')
+            logs: JSON.parse(localStorage.getItem('crackedComparison_logs') || '[]'),
+            errors: JSON.parse(localStorage.getItem('crackedComparison_errors') || '[]')
         };
 
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `successmash-debug-${Date.now()}.json`;
+        a.download = `crackedComparison-debug-${Date.now()}.json`;
         a.click();
         URL.revokeObjectURL(url);
 
@@ -523,21 +532,21 @@ class SuccessMash {
 
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.successMash = new SuccessMash();
+    window.crackedComparison = new CrackedComparison();
     
     // Add debug commands to console
-    console.log('SuccessMash loaded! Debug commands available:');
-    console.log('- window.successMash.getDebugInfo() - Get debug information');
-    console.log('- window.successMash.exportData() - Export debug data');
-    console.log('- window.successMash.log("message", "level") - Add custom log');
+    console.log('More Cracked or Less Cracked loaded! Debug commands available:');
+    console.log('- window.crackedComparison.getDebugInfo() - Get debug information');
+    console.log('- window.crackedComparison.exportData() - Export debug data');
+    console.log('- window.crackedComparison.log("message", "level") - Add custom log');
 });
 
 // Performance monitoring
 window.addEventListener('load', () => {
     const loadTime = performance.now();
-    console.log(`SuccessMash loaded in ${loadTime.toFixed(2)}ms`);
+    console.log(`More Cracked or Less Cracked loaded in ${loadTime.toFixed(2)}ms`);
     
-    if (window.successMash) {
-        window.successMash.log('Page load complete', 'info', { loadTime: loadTime.toFixed(2) });
+    if (window.crackedComparison) {
+        window.crackedComparison.log('Page load complete', 'info', { loadTime: loadTime.toFixed(2) });
     }
 });

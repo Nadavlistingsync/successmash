@@ -1,23 +1,24 @@
-# SuccessMash 🏆
+# More Cracked or Less Cracked 🏆
 
-A professional achievement comparison game inspired by Facemash, but focused on career success metrics like internships, awards, certifications, and career milestones.
+An achievement comparison game inspired by Facemash, but focused on comparing how "cracked" (successful/achieved) people are based on their university, internships, awards, certifications, and career milestones.
 
 ## 🎯 Overview
 
-SuccessMash allows users to compare two professionals side-by-side based on their professional achievements and vote on who they think is more successful. The app tracks voting patterns and maintains a leaderboard of the most successful professionals.
+More Cracked or Less Cracked allows users to compare two people side-by-side based on their achievements and vote on who they think is more "cracked" (successful/achieved). The app tracks voting patterns and maintains a leaderboard of the most cracked individuals.
 
 ## ✨ Features
 
 ### Core Functionality
-- **Side-by-side Comparison**: Compare two professionals with their achievements displayed
-- **Voting System**: Vote on who you think is more successful
-- **Leaderboard**: See rankings based on success scores
-- **Profile Management**: Add new professional profiles
-- **Success Scoring**: Algorithm that considers win rate, experience, and achievements
+- **Side-by-side Comparison**: Compare two people with their achievements displayed
+- **Voting System**: Vote on who you think is more "cracked"
+- **Leaderboard**: See rankings based on cracked scores
+- **Profile Management**: Add new profiles
+- **Cracked Scoring**: Algorithm that considers win rate, experience, and achievements
 
-### Professional Profiles Include
-- Professional headshot (with placeholder fallback)
+### Profiles Include
+- Profile picture (with placeholder fallback)
 - Name and job title
+- University/education
 - Current company/role
 - Years of experience
 - List of achievements (internships, awards, certifications, etc.)
@@ -43,11 +44,11 @@ SuccessMash allows users to compare two professionals side-by-side based on thei
 
 ### Usage
 
-#### Comparing Professionals
+#### Comparing People
 1. Navigate to the "Compare" tab
-2. Two professionals will be displayed side-by-side
+2. Two people will be displayed side-by-side
 3. Review their achievements, experience, and current roles
-4. Click "More Successful" on your choice
+4. Click "More Cracked" on your choice
 5. A new comparison will automatically load
 
 #### Adding New Profiles
@@ -55,7 +56,8 @@ SuccessMash allows users to compare two professionals side-by-side based on thei
 2. Fill in the required information:
    - Full Name
    - Job Title
-   - Company
+   - University
+   - Company/Organization
    - Years of Experience
    - Profile Image URL (optional)
    - Achievements (one per line)
@@ -64,7 +66,7 @@ SuccessMash allows users to compare two professionals side-by-side based on thei
 
 #### Viewing Leaderboard
 1. Click the "Leaderboard" tab
-2. See professionals ranked by success score
+2. See people ranked by cracked score
 3. View wins, total votes, and overall ranking
 
 ## 🏗️ Architecture
@@ -95,8 +97,8 @@ SuccessMash/
 }
 ```
 
-### Success Score Algorithm
-The success score is calculated using:
+### Cracked Score Algorithm
+The cracked score is calculated using:
 - **Win Rate (50%)**: Percentage of votes won
 - **Experience Bonus (30%)**: Years of experience (capped at 10 years)
 - **Achievement Bonus (20%)**: Number of achievements (capped at 10 achievements)
@@ -108,13 +110,13 @@ The application includes a built-in debugging system:
 
 ```javascript
 // Get debug information
-window.successMash.getDebugInfo()
+window.crackedComparison.getDebugInfo()
 
 // Export all data for analysis
-window.successMash.exportData()
+window.crackedComparison.exportData()
 
 // Add custom log entry
-window.successMash.log("Custom message", "info")
+window.crackedComparison.log("Custom message", "info")
 ```
 
 ### Debug Features
@@ -127,16 +129,16 @@ window.successMash.log("Custom message", "info")
 ### Browser Console Commands
 ```javascript
 // View debug information
-window.successMash.getDebugInfo()
+window.crackedComparison.getDebugInfo()
 
 // Export debug data
-window.successMash.exportData()
+window.crackedComparison.exportData()
 
 // View all logs
-JSON.parse(localStorage.getItem('successMash_logs'))
+JSON.parse(localStorage.getItem('crackedComparison_logs'))
 
 // View all errors
-JSON.parse(localStorage.getItem('successMash_errors'))
+JSON.parse(localStorage.getItem('crackedComparison_errors'))
 
 // Clear all data
 localStorage.clear()
@@ -224,4 +226,4 @@ For questions or issues:
 
 ---
 
-**SuccessMash** - Compare professional achievements responsibly! 🏆
+**More Cracked or Less Cracked** - Compare achievements responsibly! 🏆

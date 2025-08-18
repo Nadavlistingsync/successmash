@@ -195,6 +195,13 @@ body {
     margin-bottom: 5px;
 }
 
+.university {
+    font-size: 1rem;
+    color: #28a745;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
 .company {
     font-size: 1rem;
     color: #666;
