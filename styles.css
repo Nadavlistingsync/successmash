@@ -208,15 +208,7 @@ body {
     margin-bottom: 10px;
 }
 
-.experience {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    color: #888;
-    font-size: 0.9rem;
-    margin-bottom: 10px;
-}
+
 
 .linkedin-link {
     text-align: center;

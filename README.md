@@ -20,7 +20,6 @@ More Cracked or Less Cracked allows users to compare two people side-by-side bas
 - Name and job title
 - University/education
 - Current company/role
-- Years of experience
 - LinkedIn profile URL
 - List of achievements (internships, awards, certifications, etc.)
 - Industry categorization
@@ -59,7 +58,6 @@ More Cracked or Less Cracked allows users to compare two people side-by-side bas
    - Job Title
    - University
    - Company/Organization
-   - Years of Experience
    - Profile Image URL (optional)
    - LinkedIn Profile URL (optional)
    - Achievements (one per line)
@@ -101,9 +99,8 @@ SuccessMash/
 
 ### Cracked Score Algorithm
 The cracked score is calculated using:
-- **Win Rate (50%)**: Percentage of votes won
-- **Experience Bonus (30%)**: Years of experience (capped at 10 years)
-- **Achievement Bonus (20%)**: Number of achievements (capped at 10 achievements)
+- **Win Rate (70%)**: Percentage of votes won
+- **Achievement Bonus (30%)**: Number of achievements (capped at 10 achievements)
 
 ## 🔧 Debugging & Development
 

@@ -105,7 +105,6 @@ class CrackedComparison {
                     title: "Senior Software Engineer",
                     university: "Stanford University",
                     company: "Google",
-                    experience: 8,
                     imageUrl: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
                     linkedinUrl: "https://linkedin.com/in/sarah-chen-google",
                     achievements: [
@@ -126,7 +125,6 @@ class CrackedComparison {
                     title: "Product Manager",
                     university: "Harvard University",
                     company: "Netflix",
-                    experience: 6,
                     imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
                     linkedinUrl: "https://linkedin.com/in/marcus-rodriguez-netflix",
                     achievements: [
@@ -147,7 +145,6 @@ class CrackedComparison {
                     title: "Data Scientist",
                     university: "MIT",
                     company: "Meta",
-                    experience: 4,
                     imageUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
                     linkedinUrl: "https://linkedin.com/in/emily-watson-meta",
                     achievements: [
@@ -168,7 +165,6 @@ class CrackedComparison {
                     title: "Investment Banker",
                     university: "University of Pennsylvania (Wharton)",
                     company: "Goldman Sachs",
-                    experience: 7,
                     imageUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
                     linkedinUrl: "https://linkedin.com/in/david-kim-goldman",
                     achievements: [
@@ -189,7 +185,6 @@ class CrackedComparison {
                     title: "Creative Director",
                     university: "Parsons School of Design",
                     company: "Apple",
-                    experience: 10,
                     imageUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
                     linkedinUrl: "https://linkedin.com/in/alex-johnson-apple",
                     achievements: [
@@ -210,7 +205,6 @@ class CrackedComparison {
                     title: "Medical Director",
                     university: "Johns Hopkins University",
                     company: "Mayo Clinic",
-                    experience: 12,
                     imageUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face",
                     linkedinUrl: "https://linkedin.com/in/priya-patel-mayo",
                     achievements: [
@@ -334,7 +328,6 @@ class CrackedComparison {
         const titleElement = document.getElementById(`${side}-title`);
         const universityElement = document.getElementById(`${side}-university`);
         const companyElement = document.getElementById(`${side}-company`);
-        const experienceElement = document.getElementById(`${side}-experience`);
         const linkedinElement = document.getElementById(`${side}-linkedin`);
         const achievementsElement = document.getElementById(`${side}-achievements`);
 
@@ -353,7 +346,6 @@ class CrackedComparison {
         titleElement.textContent = candidate.title;
         universityElement.textContent = candidate.university || 'University not specified';
         companyElement.textContent = candidate.company;
-        experienceElement.textContent = candidate.experience;
 
         // Update LinkedIn link
         if (candidate.linkedinUrl) {
@@ -424,10 +416,9 @@ class CrackedComparison {
     // Calculate cracked score
     calculateCrackedScore(profile) {
         const winRate = profile.totalVotes > 0 ? profile.wins / profile.totalVotes : 0;
-        const experienceBonus = Math.min(profile.experience * 0.1, 1);
         const achievementBonus = Math.min(profile.achievements.length * 0.05, 0.5);
         
-        return Math.round((winRate * 50 + experienceBonus * 30 + achievementBonus * 20) * 100) / 100;
+        return Math.round((winRate * 70 + achievementBonus * 30) * 100) / 100;
     }
 
     // Show modal
@@ -481,7 +472,6 @@ class CrackedComparison {
             title: formData.get('title'),
             university: formData.get('university'),
             company: formData.get('company'),
-            experience: parseInt(formData.get('experience')),
             imageUrl: formData.get('imageUrl') || '',
             linkedinUrl: formData.get('linkedinUrl') || '',
             achievements: formData.get('achievements').split('\n').filter(a => a.trim()),
