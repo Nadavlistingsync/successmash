@@ -10,6 +10,7 @@ class CrackedComparison {
             totalVotes: 0,
             comparisonsMade: 0
         };
+        this.eloChange = 20; // ELO points gained/lost per comparison
         this.debugMode = true; // Enable automatic feedback loop
         
         this.init();
@@ -117,7 +118,7 @@ class CrackedComparison {
                     industry: "technology",
                     wins: 0,
                     totalVotes: 0,
-                    crackedScore: 0
+                    elo: 1200
                 },
                 {
                     id: 2,
@@ -137,7 +138,7 @@ class CrackedComparison {
                     industry: "business",
                     wins: 0,
                     totalVotes: 0,
-                    crackedScore: 0
+                    elo: 1200
                 },
                 {
                     id: 3,
@@ -157,7 +158,7 @@ class CrackedComparison {
                     industry: "technology",
                     wins: 0,
                     totalVotes: 0,
-                    crackedScore: 0
+                    elo: 1200
                 },
                 {
                     id: 4,
@@ -177,7 +178,7 @@ class CrackedComparison {
                     industry: "finance",
                     wins: 0,
                     totalVotes: 0,
-                    crackedScore: 0
+                    elo: 1200
                 },
                 {
                     id: 5,
@@ -197,7 +198,7 @@ class CrackedComparison {
                     industry: "creative",
                     wins: 0,
                     totalVotes: 0,
-                    crackedScore: 0
+                    elo: 1200
                 },
                 {
                     id: 6,
@@ -217,7 +218,7 @@ class CrackedComparison {
                     industry: "healthcare",
                     wins: 0,
                     totalVotes: 0,
-                    crackedScore: 0
+                    elo: 1200
                 }
             ];
             this.saveData();
@@ -379,18 +380,28 @@ class CrackedComparison {
             loser: loser.id,
             winnerName: winner.name,
             loserName: loser.name,
+            winnerEloBefore: winner.elo,
+            loserEloBefore: loser.elo,
             timestamp: Date.now()
         };
 
         this.votes.push(vote);
 
-        // Update profiles
+        // Update ELO ratings
         winner.wins++;
         winner.totalVotes++;
-        winner.crackedScore = this.calculateCrackedScore(winner);
+        winner.elo += this.eloChange;
         
         loser.totalVotes++;
-        loser.crackedScore = this.calculateCrackedScore(loser);
+        loser.elo -= this.eloChange;
+
+        // Ensure ELO doesn't go below 0
+        if (loser.elo < 0) loser.elo = 0;
+
+        // Update vote with ELO changes
+        vote.winnerEloAfter = winner.elo;
+        vote.loserEloAfter = loser.elo;
+        vote.eloChange = this.eloChange;
 
         // Update stats
         this.stats.totalVotes++;
