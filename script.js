@@ -1,0 +1,543 @@
+// SuccessMash Application - Professional Achievement Comparison Game
+// Automatic feedback loop integrated for debugging
+
+class SuccessMash {
+    constructor() {
+        this.profiles = [];
+        this.currentComparison = null;
+        this.votes = [];
+        this.stats = {
+            totalVotes: 0,
+            comparisonsMade: 0
+        };
+        this.debugMode = true; // Enable automatic feedback loop
+        
+        this.init();
+    }
+
+    // Initialize the application
+    init() {
+        this.loadData();
+        this.setupEventListeners();
+        this.loadMockData();
+        this.startNewComparison();
+        this.updateStats();
+        this.log('Application initialized successfully', 'info');
+    }
+
+    // Automatic feedback loop for debugging
+    log(message, level = 'info', data = null) {
+        if (!this.debugMode) return;
+        
+        const timestamp = new Date().toISOString();
+        const logEntry = {
+            timestamp,
+            level,
+            message,
+            data,
+            userAgent: navigator.userAgent,
+            url: window.location.href
+        };
+        
+        console.log(`[${timestamp}] [${level.toUpperCase()}] ${message}`, data || '');
+        
+        // Store logs in localStorage for debugging
+        const logs = JSON.parse(localStorage.getItem('successMash_logs') || '[]');
+        logs.push(logEntry);
+        
+        // Keep only last 100 logs
+        if (logs.length > 100) {
+            logs.splice(0, logs.length - 100);
+        }
+        
+        localStorage.setItem('successMash_logs', JSON.stringify(logs));
+        
+        // Auto-detect and report errors
+        if (level === 'error') {
+            this.reportError(logEntry);
+        }
+    }
+
+    // Report errors automatically
+    reportError(errorLog) {
+        // In a real app, this would send to an error tracking service
+        console.error('Error detected:', errorLog);
+        
+        // Store error for debugging
+        const errors = JSON.parse(localStorage.getItem('successMash_errors') || '[]');
+        errors.push(errorLog);
+        localStorage.setItem('successMash_errors', JSON.stringify(errors));
+    }
+
+    // Load data from localStorage
+    loadData() {
+        try {
+            this.profiles = JSON.parse(localStorage.getItem('successMash_profiles') || '[]');
+            this.votes = JSON.parse(localStorage.getItem('successMash_votes') || '[]');
+            this.stats = JSON.parse(localStorage.getItem('successMash_stats') || JSON.stringify(this.stats));
+            this.log('Data loaded from localStorage', 'info', { profiles: this.profiles.length, votes: this.votes.length });
+        } catch (error) {
+            this.log('Error loading data from localStorage', 'error', error);
+            this.profiles = [];
+            this.votes = [];
+        }
+    }
+
+    // Save data to localStorage
+    saveData() {
+        try {
+            localStorage.setItem('successMash_profiles', JSON.stringify(this.profiles));
+            localStorage.setItem('successMash_votes', JSON.stringify(this.votes));
+            localStorage.setItem('successMash_stats', JSON.stringify(this.stats));
+            this.log('Data saved to localStorage', 'info');
+        } catch (error) {
+            this.log('Error saving data to localStorage', 'error', error);
+        }
+    }
+
+    // Load mock data for initial testing
+    loadMockData() {
+        if (this.profiles.length === 0) {
+            this.profiles = [
+                {
+                    id: 1,
+                    name: "Sarah Chen",
+                    title: "Senior Software Engineer",
+                    company: "Google",
+                    experience: 8,
+                    imageUrl: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
+                    achievements: [
+                        "Google Software Engineering Internship",
+                        "Stanford Computer Science Degree",
+                        "Microsoft MVP Award",
+                        "AWS Solutions Architect Certification",
+                        "Open Source Contributor (500+ stars)"
+                    ],
+                    industry: "technology",
+                    wins: 0,
+                    totalVotes: 0,
+                    successScore: 0
+                },
+                {
+                    id: 2,
+                    name: "Marcus Rodriguez",
+                    title: "Product Manager",
+                    company: "Netflix",
+                    experience: 6,
+                    imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+                    achievements: [
+                        "Netflix Product Management Internship",
+                        "Harvard Business School MBA",
+                        "Forbes 30 Under 30",
+                        "Product Hunt Maker of the Year",
+                        "Led $50M revenue growth project"
+                    ],
+                    industry: "business",
+                    wins: 0,
+                    totalVotes: 0,
+                    successScore: 0
+                },
+                {
+                    id: 3,
+                    name: "Emily Watson",
+                    title: "Data Scientist",
+                    company: "Meta",
+                    experience: 4,
+                    imageUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
+                    achievements: [
+                        "Meta Data Science Internship",
+                        "MIT Statistics PhD",
+                        "Kaggle Grandmaster",
+                        "Published 15+ research papers",
+                        "TEDx Speaker on AI Ethics"
+                    ],
+                    industry: "technology",
+                    wins: 0,
+                    totalVotes: 0,
+                    successScore: 0
+                },
+                {
+                    id: 4,
+                    name: "David Kim",
+                    title: "Investment Banker",
+                    company: "Goldman Sachs",
+                    experience: 7,
+                    imageUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
+                    achievements: [
+                        "Goldman Sachs Summer Analyst",
+                        "Wharton Finance Degree",
+                        "CFA Charterholder",
+                        "Closed $2B M&A deal",
+                        "Youngest VP in department history"
+                    ],
+                    industry: "finance",
+                    wins: 0,
+                    totalVotes: 0,
+                    successScore: 0
+                },
+                {
+                    id: 5,
+                    name: "Alex Johnson",
+                    title: "Creative Director",
+                    company: "Apple",
+                    experience: 10,
+                    imageUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
+                    achievements: [
+                        "Apple Design Internship",
+                        "Parsons School of Design",
+                        "Cannes Lions Grand Prix",
+                        "Designed iPhone 15 interface",
+                        "100+ million users worldwide"
+                    ],
+                    industry: "creative",
+                    wins: 0,
+                    totalVotes: 0,
+                    successScore: 0
+                },
+                {
+                    id: 6,
+                    name: "Priya Patel",
+                    title: "Medical Director",
+                    company: "Mayo Clinic",
+                    experience: 12,
+                    imageUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face",
+                    achievements: [
+                        "Mayo Clinic Residency",
+                        "Johns Hopkins Medical School",
+                        "Board Certified in 3 specialties",
+                        "Published 50+ medical papers",
+                        "Led breakthrough cancer research"
+                    ],
+                    industry: "healthcare",
+                    wins: 0,
+                    totalVotes: 0,
+                    successScore: 0
+                }
+            ];
+            this.saveData();
+            this.log('Mock data loaded', 'info', { profilesCount: this.profiles.length });
+        }
+    }
+
+    // Setup event listeners
+    setupEventListeners() {
+        // Navigation
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                this.switchView(e.target.dataset.view);
+            });
+        });
+
+        // Vote buttons
+        document.querySelectorAll('.vote-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                this.handleVote(e.target.dataset.candidate);
+            });
+        });
+
+        // Add profile form
+        document.getElementById('add-profile-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.addNewProfile();
+        });
+
+        // Modal close
+        document.querySelector('.close-modal').addEventListener('click', () => {
+            this.hideModal();
+        });
+
+        // Error handling
+        window.addEventListener('error', (e) => {
+            this.log('Global error caught', 'error', { error: e.error, filename: e.filename, lineno: e.lineno });
+        });
+
+        window.addEventListener('unhandledrejection', (e) => {
+            this.log('Unhandled promise rejection', 'error', { reason: e.reason });
+        });
+
+        this.log('Event listeners setup complete', 'info');
+    }
+
+    // Switch between views
+    switchView(viewName) {
+        // Update navigation
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector(`[data-view="${viewName}"]`).classList.add('active');
+
+        // Update views
+        document.querySelectorAll('.view').forEach(view => {
+            view.classList.remove('active');
+        });
+        document.getElementById(`${viewName}-view`).classList.add('active');
+
+        // Load specific view data
+        if (viewName === 'leaderboard') {
+            this.updateLeaderboard();
+        }
+
+        this.log('View switched', 'info', { view: viewName });
+    }
+
+    // Start a new comparison
+    startNewComparison() {
+        if (this.profiles.length < 2) {
+            this.log('Not enough profiles for comparison', 'warning');
+            return;
+        }
+
+        // Get two random profiles
+        const shuffled = [...this.profiles].sort(() => 0.5 - Math.random());
+        this.currentComparison = {
+            left: shuffled[0],
+            right: shuffled[1],
+            timestamp: Date.now()
+        };
+
+        this.updateComparisonDisplay();
+        this.log('New comparison started', 'info', { 
+            left: this.currentComparison.left.name, 
+            right: this.currentComparison.right.name 
+        });
+    }
+
+    // Update the comparison display
+    updateComparisonDisplay() {
+        if (!this.currentComparison) return;
+
+        const { left, right } = this.currentComparison;
+
+        // Update left candidate
+        this.updateCandidateDisplay('left', left);
+        
+        // Update right candidate
+        this.updateCandidateDisplay('right', right);
+    }
+
+    // Update individual candidate display
+    updateCandidateDisplay(side, candidate) {
+        const imageElement = document.getElementById(`${side}-image`);
+        const nameElement = document.getElementById(`${side}-name`);
+        const titleElement = document.getElementById(`${side}-title`);
+        const companyElement = document.getElementById(`${side}-company`);
+        const experienceElement = document.getElementById(`${side}-experience`);
+        const achievementsElement = document.getElementById(`${side}-achievements`);
+
+        // Update image
+        if (candidate.imageUrl) {
+            imageElement.src = candidate.imageUrl;
+            imageElement.style.display = 'block';
+            imageElement.parentElement.querySelector('.image-placeholder').style.display = 'none';
+        } else {
+            imageElement.style.display = 'none';
+            imageElement.parentElement.querySelector('.image-placeholder').style.display = 'flex';
+        }
+
+        // Update text content
+        nameElement.textContent = candidate.name;
+        titleElement.textContent = candidate.title;
+        companyElement.textContent = candidate.company;
+        experienceElement.textContent = candidate.experience;
+
+        // Update achievements
+        achievementsElement.innerHTML = '';
+        candidate.achievements.forEach(achievement => {
+            const li = document.createElement('li');
+            li.textContent = achievement;
+            achievementsElement.appendChild(li);
+        });
+    }
+
+    // Handle voting
+    handleVote(winnerSide) {
+        if (!this.currentComparison) return;
+
+        const winner = this.currentComparison[winnerSide];
+        const loser = this.currentComparison[winnerSide === 'left' ? 'right' : 'left'];
+
+        // Record vote
+        const vote = {
+            id: Date.now(),
+            winner: winner.id,
+            loser: loser.id,
+            winnerName: winner.name,
+            loserName: loser.name,
+            timestamp: Date.now()
+        };
+
+        this.votes.push(vote);
+
+        // Update profiles
+        winner.wins++;
+        winner.totalVotes++;
+        winner.successScore = this.calculateSuccessScore(winner);
+        
+        loser.totalVotes++;
+        loser.successScore = this.calculateSuccessScore(loser);
+
+        // Update stats
+        this.stats.totalVotes++;
+        this.stats.comparisonsMade++;
+
+        // Save data
+        this.saveData();
+
+        // Show success modal
+        this.showModal();
+
+        // Log vote
+        this.log('Vote recorded', 'info', vote);
+
+        // Start new comparison after delay
+        setTimeout(() => {
+            this.hideModal();
+            this.startNewComparison();
+            this.updateStats();
+        }, 2000);
+    }
+
+    // Calculate success score
+    calculateSuccessScore(profile) {
+        const winRate = profile.totalVotes > 0 ? profile.wins / profile.totalVotes : 0;
+        const experienceBonus = Math.min(profile.experience * 0.1, 1);
+        const achievementBonus = Math.min(profile.achievements.length * 0.05, 0.5);
+        
+        return Math.round((winRate * 50 + experienceBonus * 30 + achievementBonus * 20) * 100) / 100;
+    }
+
+    // Show modal
+    showModal() {
+        document.getElementById('success-modal').style.display = 'block';
+    }
+
+    // Hide modal
+    hideModal() {
+        document.getElementById('success-modal').style.display = 'none';
+    }
+
+    // Update stats display
+    updateStats() {
+        document.getElementById('total-votes').textContent = this.stats.totalVotes;
+        document.getElementById('comparisons-made').textContent = this.stats.comparisonsMade;
+    }
+
+    // Update leaderboard
+    updateLeaderboard() {
+        const leaderboardList = document.getElementById('leaderboard-list');
+        leaderboardList.innerHTML = '';
+
+        // Sort profiles by success score
+        const sortedProfiles = [...this.profiles].sort((a, b) => b.successScore - a.successScore);
+
+        sortedProfiles.forEach((profile, index) => {
+            const item = document.createElement('div');
+            item.className = 'leaderboard-item';
+            item.innerHTML = `
+                <span class="rank">${index + 1}</span>
+                <span class="name">${profile.name}</span>
+                <span class="score">${profile.successScore}</span>
+                <span class="wins">${profile.wins}</span>
+                <span class="total-votes">${profile.totalVotes}</span>
+            `;
+            leaderboardList.appendChild(item);
+        });
+
+        this.log('Leaderboard updated', 'info', { profilesCount: sortedProfiles.length });
+    }
+
+    // Add new profile
+    addNewProfile() {
+        const form = document.getElementById('add-profile-form');
+        const formData = new FormData(form);
+
+        const newProfile = {
+            id: Date.now(),
+            name: formData.get('name'),
+            title: formData.get('title'),
+            company: formData.get('company'),
+            experience: parseInt(formData.get('experience')),
+            imageUrl: formData.get('imageUrl') || '',
+            achievements: formData.get('achievements').split('\n').filter(a => a.trim()),
+            industry: formData.get('industry'),
+            wins: 0,
+            totalVotes: 0,
+            successScore: 0
+        };
+
+        // Validate profile
+        if (newProfile.achievements.length === 0) {
+            this.log('Profile validation failed: no achievements', 'error');
+            alert('Please add at least one achievement.');
+            return;
+        }
+
+        this.profiles.push(newProfile);
+        this.saveData();
+        form.reset();
+
+        // Switch back to compare view
+        this.switchView('compare');
+        this.startNewComparison();
+
+        this.log('New profile added', 'info', { name: newProfile.name, achievements: newProfile.achievements.length });
+    }
+
+    // Get debug information
+    getDebugInfo() {
+        return {
+            profiles: this.profiles.length,
+            votes: this.votes.length,
+            stats: this.stats,
+            currentComparison: this.currentComparison,
+            localStorage: {
+                profiles: localStorage.getItem('successMash_profiles') ? 'exists' : 'missing',
+                votes: localStorage.getItem('successMash_votes') ? 'exists' : 'missing',
+                stats: localStorage.getItem('successMash_stats') ? 'exists' : 'missing'
+            }
+        };
+    }
+
+    // Export data for debugging
+    exportData() {
+        const data = {
+            profiles: this.profiles,
+            votes: this.votes,
+            stats: this.stats,
+            debugInfo: this.getDebugInfo(),
+            logs: JSON.parse(localStorage.getItem('successMash_logs') || '[]'),
+            errors: JSON.parse(localStorage.getItem('successMash_errors') || '[]')
+        };
+
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `successmash-debug-${Date.now()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+
+        this.log('Debug data exported', 'info');
+    }
+}
+
+// Initialize the application when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    window.successMash = new SuccessMash();
+    
+    // Add debug commands to console
+    console.log('SuccessMash loaded! Debug commands available:');
+    console.log('- window.successMash.getDebugInfo() - Get debug information');
+    console.log('- window.successMash.exportData() - Export debug data');
+    console.log('- window.successMash.log("message", "level") - Add custom log');
+});
+
+// Performance monitoring
+window.addEventListener('load', () => {
+    const loadTime = performance.now();
+    console.log(`SuccessMash loaded in ${loadTime.toFixed(2)}ms`);
+    
+    if (window.successMash) {
+        window.successMash.log('Page load complete', 'info', { loadTime: loadTime.toFixed(2) });
+    }
+});

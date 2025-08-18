@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuccessMash - Professional Achievement Comparison</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="logo">
+                <i class="fas fa-trophy"></i>
+                SuccessMash
+            </h1>
+            <p class="tagline">Compare professional achievements and career success</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <button class="nav-btn active" data-view="compare">
+                <i class="fas fa-balance-scale"></i>
+                Compare
+            </button>
+            <button class="nav-btn" data-view="leaderboard">
+                <i class="fas fa-chart-bar"></i>
+                Leaderboard
+            </button>
+            <button class="nav-btn" data-view="add-profile">
+                <i class="fas fa-plus"></i>
+                Add Profile
+            </button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Comparison View -->
+            <div id="compare-view" class="view active">
+                <div class="comparison-container">
+                    <div class="candidate left-candidate">
+                        <div class="candidate-card">
+                            <div class="profile-image">
+                                <img id="left-image" src="" alt="Profile">
+                                <div class="image-placeholder">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            </div>
+                            <div class="candidate-info">
+                                <h2 id="left-name">Loading...</h2>
+                                <p id="left-title" class="title">Loading...</p>
+                                <p id="left-company" class="company">Loading...</p>
+                                <div class="experience">
+                                    <i class="fas fa-clock"></i>
+                                    <span id="left-experience">Loading...</span> years
+                                </div>
+                            </div>
+                            <div class="achievements">
+                                <h3>Achievements</h3>
+                                <ul id="left-achievements">
+                                    <li>Loading...</li>
+                                </ul>
+                            </div>
+                            <button class="vote-btn" data-candidate="left">
+                                <i class="fas fa-thumbs-up"></i>
+                                More Successful
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="vs-divider">
+                        <div class="vs-circle">
+                            <span>VS</span>
+                        </div>
+                    </div>
+
+                    <div class="candidate right-candidate">
+                        <div class="candidate-card">
+                            <div class="profile-image">
+                                <img id="right-image" src="" alt="Profile">
+                                <div class="image-placeholder">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            </div>
+                            <div class="candidate-info">
+                                <h2 id="right-name">Loading...</h2>
+                                <p id="right-title" class="title">Loading...</p>
+                                <p id="right-company" class="company">Loading...</p>
+                                <div class="experience">
+                                    <i class="fas fa-clock"></i>
+                                    <span id="right-experience">Loading...</span> years
+                                </div>
+                            </div>
+                            <div class="achievements">
+                                <h3>Achievements</h3>
+                                <ul id="right-achievements">
+                                    <li>Loading...</li>
+                                </ul>
+                            </div>
+                            <button class="vote-btn" data-candidate="right">
+                                <i class="fas fa-thumbs-up"></i>
+                                More Successful
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats">
+                    <div class="stat">
+                        <span class="stat-number" id="total-votes">0</span>
+                        <span class="stat-label">Total Votes</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" id="comparisons-made">0</span>
+                        <span class="stat-label">Comparisons</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leaderboard View -->
+            <div id="leaderboard-view" class="view">
+                <h2>Success Leaderboard</h2>
+                <div class="leaderboard-container">
+                    <div class="leaderboard-header">
+                        <span>Rank</span>
+                        <span>Name</span>
+                        <span>Success Score</span>
+                        <span>Wins</span>
+                        <span>Total Votes</span>
+                    </div>
+                    <div id="leaderboard-list" class="leaderboard-list">
+                        <!-- Leaderboard items will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Profile View -->
+            <div id="add-profile-view" class="view">
+                <h2>Add New Professional Profile</h2>
+                <form id="add-profile-form" class="add-profile-form">
+                    <div class="form-group">
+                        <label for="name">Full Name *</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="title">Job Title *</label>
+                        <input type="text" id="title" name="title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="company">Company *</label>
+                        <input type="text" id="company" name="company" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience *</label>
+                        <input type="number" id="experience" name="experience" min="0" max="50" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="image-url">Profile Image URL</label>
+                        <input type="url" id="image-url" name="imageUrl" placeholder="https://example.com/image.jpg">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="achievements">Achievements (one per line) *</label>
+                        <textarea id="achievements" name="achievements" rows="5" placeholder="Google Software Engineering Internship&#10;Stanford Computer Science Degree&#10;Microsoft MVP Award&#10;AWS Solutions Architect Certification" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <select id="industry" name="industry">
+                            <option value="technology">Technology</option>
+                            <option value="business">Business</option>
+                            <option value="finance">Finance</option>
+                            <option value="healthcare">Healthcare</option>
+                            <option value="education">Education</option>
+                            <option value="creative">Creative</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-plus"></i>
+                        Add Profile
+                    </button>
+                </form>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 SuccessMash. Compare professional achievements responsibly.</p>
+        </footer>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Vote Recorded!</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Your vote has been recorded. Loading next comparison...</p>
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

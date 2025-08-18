@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuccessMash - Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #5a6fd8;
+        }
+        .result {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .info { color: #17a2b8; }
+    </style>
+</head>
+<body>
+    <h1>SuccessMash - Test Page</h1>
+    
+    <div class="test-section">
+        <h2>Application Status</h2>
+        <button class="test-button" onclick="testAppStatus()">Test App Status</button>
+        <div id="app-status" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Data Management</h2>
+        <button class="test-button" onclick="testDataManagement()">Test Data Management</button>
+        <button class="test-button" onclick="clearAllData()">Clear All Data</button>
+        <button class="test-button" onclick="exportTestData()">Export Test Data</button>
+        <div id="data-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Voting System</h2>
+        <button class="test-button" onclick="testVoting()">Test Voting System</button>
+        <div id="voting-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Debug Information</h2>
+        <button class="test-button" onclick="showDebugInfo()">Show Debug Info</button>
+        <button class="test-button" onclick="showLogs()">Show Logs</button>
+        <button class="test-button" onclick="showErrors()">Show Errors</button>
+        <div id="debug-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Performance Test</h2>
+        <button class="test-button" onclick="testPerformance()">Run Performance Test</button>
+        <div id="performance-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Navigation</h2>
+        <a href="index.html" class="test-button" style="text-decoration: none; display: inline-block;">Open SuccessMash App</a>
+    </div>
+
+    <script>
+        function logResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<span class="${type}">[${new Date().toLocaleTimeString()}] ${message}</span>`;
+        }
+
+        function testAppStatus() {
+            try {
+                if (window.successMash) {
+                    logResult('app-status', '✅ SuccessMash application is loaded and running', 'success');
+                    
+                    const debugInfo = window.successMash.getDebugInfo();
+                    logResult('app-status', `📊 Profiles: ${debugInfo.profiles}, Votes: ${debugInfo.votes}, Comparisons: ${debugInfo.stats.comparisonsMade}`, 'info');
+                } else {
+                    logResult('app-status', '❌ SuccessMash application not found. Please open index.html first.', 'error');
+                }
+            } catch (error) {
+                logResult('app-status', `❌ Error testing app status: ${error.message}`, 'error');
+            }
+        }
+
+        function testDataManagement() {
+            try {
+                if (!window.successMash) {
+                    logResult('data-result', '❌ SuccessMash not loaded', 'error');
+                    return;
+                }
+
+                // Test localStorage
+                const profiles = localStorage.getItem('successMash_profiles');
+                const votes = localStorage.getItem('successMash_votes');
+                const stats = localStorage.getItem('successMash_stats');
+
+                logResult('data-result', `📁 localStorage check:`, 'info');
+                logResult('data-result', `   Profiles: ${profiles ? '✅ Found' : '❌ Missing'}`, profiles ? 'success' : 'error');
+                logResult('data-result', `   Votes: ${votes ? '✅ Found' : '❌ Missing'}`, votes ? 'success' : 'error');
+                logResult('data-result', `   Stats: ${stats ? '✅ Found' : '❌ Missing'}`, stats ? 'success' : 'error');
+
+                // Test data structure
+                if (profiles) {
+                    const profilesData = JSON.parse(profiles);
+                    logResult('data-result', `   Profile count: ${profilesData.length}`, 'info');
+                }
+
+            } catch (error) {
+                logResult('data-result', `❌ Error testing data management: ${error.message}`, 'error');
+            }
+        }
+
+        function clearAllData() {
+            try {
+                localStorage.clear();
+                logResult('data-result', '🗑️ All data cleared from localStorage', 'success');
+                
+                if (window.successMash) {
+                    window.successMash.profiles = [];
+                    window.successMash.votes = [];
+                    window.successMash.stats = { totalVotes: 0, comparisonsMade: 0 };
+                    logResult('data-result', '🔄 Application data reset', 'success');
+                }
+            } catch (error) {
+                logResult('data-result', `❌ Error clearing data: ${error.message}`, 'error');
+            }
+        }
+
+        function exportTestData() {
+            try {
+                if (window.successMash) {
+                    window.successMash.exportData();
+                    logResult('data-result', '📤 Test data exported successfully', 'success');
+                } else {
+                    logResult('data-result', '❌ SuccessMash not loaded', 'error');
+                }
+            } catch (error) {
+                logResult('data-result', `❌ Error exporting data: ${error.message}`, 'error');
+            }
+        }
+
+        function testVoting() {
+            try {
+                if (!window.successMash) {
+                    logResult('voting-result', '❌ SuccessMash not loaded', 'error');
+                    return;
+                }
+
+                const initialVotes = window.successMash.votes.length;
+                const initialStats = { ...window.successMash.stats };
+
+                // Simulate a vote
+                if (window.successMash.currentComparison) {
+                    const winner = window.successMash.currentComparison.left;
+                    const loser = window.successMash.currentComparison.right;
+                    
+                    logResult('voting-result', `🎯 Testing vote: ${winner.name} vs ${loser.name}`, 'info');
+                    
+                    // Simulate vote
+                    winner.wins++;
+                    winner.totalVotes++;
+                    loser.totalVotes++;
+                    window.successMash.stats.totalVotes++;
+                    window.successMash.stats.comparisonsMade++;
+                    
+                    logResult('voting-result', `✅ Vote simulated successfully`, 'success');
+                    logResult('voting-result', `   Votes increased: ${initialVotes} → ${window.successMash.votes.length + 1}`, 'info');
+                    logResult('voting-result', `   Total votes: ${initialStats.totalVotes} → ${window.successMash.stats.totalVotes}`, 'info');
+                } else {
+                    logResult('voting-result', '⚠️ No current comparison available', 'error');
+                }
+
+            } catch (error) {
+                logResult('voting-result', `❌ Error testing voting: ${error.message}`, 'error');
+            }
+        }
+
+        function showDebugInfo() {
+            try {
+                if (window.successMash) {
+                    const debugInfo = window.successMash.getDebugInfo();
+                    logResult('debug-result', '🔍 Debug Information:', 'info');
+                    logResult('debug-result', JSON.stringify(debugInfo, null, 2), 'info');
+                } else {
+                    logResult('debug-result', '❌ SuccessMash not loaded', 'error');
+                }
+            } catch (error) {
+                logResult('debug-result', `❌ Error showing debug info: ${error.message}`, 'error');
+            }
+        }
+
+        function showLogs() {
+            try {
+                const logs = JSON.parse(localStorage.getItem('successMash_logs') || '[]');
+                logResult('debug-result', `📝 Logs (${logs.length} entries):`, 'info');
+                
+                if (logs.length > 0) {
+                    const recentLogs = logs.slice(-5); // Show last 5 logs
+                    recentLogs.forEach(log => {
+                        logResult('debug-result', `   [${log.level.toUpperCase()}] ${log.message}`, log.level);
+                    });
+                } else {
+                    logResult('debug-result', '   No logs found', 'info');
+                }
+            } catch (error) {
+                logResult('debug-result', `❌ Error showing logs: ${error.message}`, 'error');
+            }
+        }
+
+        function showErrors() {
+            try {
+                const errors = JSON.parse(localStorage.getItem('successMash_errors') || '[]');
+                logResult('debug-result', `🚨 Errors (${errors.length} entries):`, 'info');
+                
+                if (errors.length > 0) {
+                    const recentErrors = errors.slice(-3); // Show last 3 errors
+                    recentErrors.forEach(error => {
+                        logResult('debug-result', `   [${error.level.toUpperCase()}] ${error.message}`, 'error');
+                    });
+                } else {
+                    logResult('debug-result', '   No errors found', 'success');
+                }
+            } catch (error) {
+                logResult('debug-result', `❌ Error showing errors: ${error.message}`, 'error');
+            }
+        }
+
+        function testPerformance() {
+            try {
+                const startTime = performance.now();
+                
+                // Test data operations
+                const testProfiles = Array.from({ length: 100 }, (_, i) => ({
+                    id: i,
+                    name: `Test User ${i}`,
+                    title: "Test Title",
+                    company: "Test Company",
+                    experience: Math.floor(Math.random() * 20),
+                    achievements: ["Test Achievement"],
+                    wins: 0,
+                    totalVotes: 0,
+                    successScore: 0
+                }));
+
+                // Test sorting
+                const sortedProfiles = [...testProfiles].sort((a, b) => b.successScore - a.successScore);
+                
+                const endTime = performance.now();
+                const duration = endTime - startTime;
+
+                logResult('performance-result', `⚡ Performance test completed in ${duration.toFixed(2)}ms`, 'success');
+                logResult('performance-result', `   Tested ${testProfiles.length} profiles`, 'info');
+                logResult('performance-result', `   Sorting operation: ${duration.toFixed(2)}ms`, 'info');
+
+                if (duration < 10) {
+                    logResult('performance-result', '✅ Performance is excellent', 'success');
+                } else if (duration < 50) {
+                    logResult('performance-result', '⚠️ Performance is acceptable', 'info');
+                } else {
+                    logResult('performance-result', '❌ Performance needs improvement', 'error');
+                }
+
+            } catch (error) {
+                logResult('performance-result', `❌ Error testing performance: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-run basic tests when page loads
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testAppStatus();
+                testDataManagement();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,658 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header Styles */
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: white;
+}
+
+.logo {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.logo i {
+    color: #ffd700;
+}
+
+.tagline {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    font-weight: 300;
+}
+
+/* Navigation Styles */
+.nav {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.nav-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.nav-btn.active {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Main Content Styles */
+.main-content {
+    flex: 1;
+}
+
+.view {
+    display: none;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.view.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Comparison View Styles */
+.comparison-container {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+    align-items: center;
+}
+
+.candidate-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.candidate-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.candidate-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.profile-image {
+    text-align: center;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.profile-image img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #f0f0f0;
+    transition: all 0.3s ease;
+}
+
+.profile-image img:hover {
+    border-color: #667eea;
+    transform: scale(1.05);
+}
+
+.image-placeholder {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    border: 4px solid #e0e0e0;
+}
+
+.image-placeholder i {
+    font-size: 3rem;
+    color: #ccc;
+}
+
+.candidate-info {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.candidate-info h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.title {
+    font-size: 1.1rem;
+    color: #667eea;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.company {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.experience {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.achievements {
+    margin-bottom: 25px;
+}
+
+.achievements h3 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: #333;
+    text-align: center;
+}
+
+.achievements ul {
+    list-style: none;
+    padding: 0;
+}
+
+.achievements li {
+    background: #f8f9fa;
+    padding: 8px 12px;
+    margin-bottom: 5px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #555;
+    border-left: 3px solid #667eea;
+}
+
+.vote-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.vote-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.vote-btn:active {
+    transform: translateY(0);
+}
+
+/* VS Divider Styles */
+.vs-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vs-circle {
+    width: 80px;
+    height: 80px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #667eea;
+    border: 3px solid #f0f0f0;
+}
+
+/* Stats Styles */
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 30px;
+}
+
+.stat {
+    text-align: center;
+    color: white;
+}
+
+.stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* Leaderboard Styles */
+.leaderboard-container {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.leaderboard-header {
+    display: grid;
+    grid-template-columns: 80px 2fr 1fr 1fr 1fr;
+    gap: 20px;
+    padding: 20px;
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.leaderboard-list {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.leaderboard-item {
+    display: grid;
+    grid-template-columns: 80px 2fr 1fr 1fr 1fr;
+    gap: 20px;
+    padding: 15px 20px;
+    border-bottom: 1px solid #e9ecef;
+    transition: background-color 0.3s ease;
+}
+
+.leaderboard-item:hover {
+    background: #f8f9fa;
+}
+
+.leaderboard-item:nth-child(1) {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+}
+
+.leaderboard-item:nth-child(2) {
+    background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
+}
+
+.leaderboard-item:nth-child(3) {
+    background: linear-gradient(135deg, #cd7f32, #daa520);
+}
+
+.rank {
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.leaderboard-item:nth-child(1) .rank::after {
+    content: '🥇';
+    margin-left: 5px;
+}
+
+.leaderboard-item:nth-child(2) .rank::after {
+    content: '🥈';
+    margin-left: 5px;
+}
+
+.leaderboard-item:nth-child(3) .rank::after {
+    content: '🥉';
+    margin-left: 5px;
+}
+
+/* Add Profile Form Styles */
+.add-profile-form {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.add-profile-form h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.submit-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 0;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #333;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+}
+
+.close-modal:hover {
+    background-color: #f0f0f0;
+}
+
+.modal-body {
+    padding: 20px;
+    text-align: center;
+}
+
+.loading-spinner {
+    margin-top: 20px;
+    font-size: 2rem;
+    color: #667eea;
+}
+
+/* Footer Styles */
+.footer {
+    text-align: center;
+    margin-top: 40px;
+    color: white;
+    opacity: 0.8;
+    font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    .logo {
+        font-size: 2rem;
+    }
+    
+    .comparison-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .vs-divider {
+        order: -1;
+        margin-bottom: 20px;
+    }
+    
+    .vs-circle {
+        width: 60px;
+        height: 60px;
+        font-size: 1rem;
+    }
+    
+    .candidate-card {
+        padding: 20px;
+    }
+    
+    .stats {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .leaderboard-header,
+    .leaderboard-item {
+        grid-template-columns: 60px 1fr 1fr;
+        gap: 10px;
+        font-size: 0.9rem;
+    }
+    
+    .leaderboard-header span:nth-child(3),
+    .leaderboard-header span:nth-child(4),
+    .leaderboard-item span:nth-child(3),
+    .leaderboard-item span:nth-child(4) {
+        display: none;
+    }
+    
+    .add-profile-form {
+        padding: 20px;
+    }
+    
+    .nav {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .nav-btn {
+        width: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .candidate-card {
+        padding: 15px;
+    }
+    
+    .profile-image img,
+    .image-placeholder {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .image-placeholder i {
+        font-size: 2rem;
+    }
+    
+    .candidate-info h2 {
+        font-size: 1.2rem;
+    }
+    
+    .title {
+        font-size: 1rem;
+    }
+    
+    .achievements li {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+    }
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Focus styles for accessibility */
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .candidate-card {
+        border: 2px solid #333;
+    }
+    
+    .vote-btn,
+    .submit-btn {
+        border: 2px solid #333;
+    }
+}
