@@ -107,6 +107,7 @@ class CrackedComparison {
                     company: "Google",
                     experience: 8,
                     imageUrl: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
+                    linkedinUrl: "https://linkedin.com/in/sarah-chen-google",
                     achievements: [
                         "Google Software Engineering Internship",
                         "Stanford Computer Science Degree",
@@ -127,6 +128,7 @@ class CrackedComparison {
                     company: "Netflix",
                     experience: 6,
                     imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+                    linkedinUrl: "https://linkedin.com/in/marcus-rodriguez-netflix",
                     achievements: [
                         "Netflix Product Management Internship",
                         "Harvard Business School MBA",
@@ -147,6 +149,7 @@ class CrackedComparison {
                     company: "Meta",
                     experience: 4,
                     imageUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
+                    linkedinUrl: "https://linkedin.com/in/emily-watson-meta",
                     achievements: [
                         "Meta Data Science Internship",
                         "MIT Statistics PhD",
@@ -167,6 +170,7 @@ class CrackedComparison {
                     company: "Goldman Sachs",
                     experience: 7,
                     imageUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
+                    linkedinUrl: "https://linkedin.com/in/david-kim-goldman",
                     achievements: [
                         "Goldman Sachs Summer Analyst",
                         "Wharton Finance Degree",
@@ -187,6 +191,7 @@ class CrackedComparison {
                     company: "Apple",
                     experience: 10,
                     imageUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
+                    linkedinUrl: "https://linkedin.com/in/alex-johnson-apple",
                     achievements: [
                         "Apple Design Internship",
                         "Parsons School of Design",
@@ -207,6 +212,7 @@ class CrackedComparison {
                     company: "Mayo Clinic",
                     experience: 12,
                     imageUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face",
+                    linkedinUrl: "https://linkedin.com/in/priya-patel-mayo",
                     achievements: [
                         "Mayo Clinic Residency",
                         "Johns Hopkins Medical School",
@@ -329,6 +335,7 @@ class CrackedComparison {
         const universityElement = document.getElementById(`${side}-university`);
         const companyElement = document.getElementById(`${side}-company`);
         const experienceElement = document.getElementById(`${side}-experience`);
+        const linkedinElement = document.getElementById(`${side}-linkedin`);
         const achievementsElement = document.getElementById(`${side}-achievements`);
 
         // Update image
@@ -347,6 +354,15 @@ class CrackedComparison {
         universityElement.textContent = candidate.university || 'University not specified';
         companyElement.textContent = candidate.company;
         experienceElement.textContent = candidate.experience;
+
+        // Update LinkedIn link
+        if (candidate.linkedinUrl) {
+            const linkedinBtn = linkedinElement.querySelector('.linkedin-btn');
+            linkedinBtn.href = candidate.linkedinUrl;
+            linkedinElement.style.display = 'block';
+        } else {
+            linkedinElement.style.display = 'none';
+        }
 
         // Update achievements
         achievementsElement.innerHTML = '';
@@ -467,6 +483,7 @@ class CrackedComparison {
             company: formData.get('company'),
             experience: parseInt(formData.get('experience')),
             imageUrl: formData.get('imageUrl') || '',
+            linkedinUrl: formData.get('linkedinUrl') || '',
             achievements: formData.get('achievements').split('\n').filter(a => a.trim()),
             industry: formData.get('industry'),
             wins: 0,

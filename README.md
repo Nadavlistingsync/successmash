@@ -21,6 +21,7 @@ More Cracked or Less Cracked allows users to compare two people side-by-side bas
 - University/education
 - Current company/role
 - Years of experience
+- LinkedIn profile URL
 - List of achievements (internships, awards, certifications, etc.)
 - Industry categorization
 
@@ -60,6 +61,7 @@ More Cracked or Less Cracked allows users to compare two people side-by-side bas
    - Company/Organization
    - Years of Experience
    - Profile Image URL (optional)
+   - LinkedIn Profile URL (optional)
    - Achievements (one per line)
    - Industry
 3. Click "Add Profile" to save
