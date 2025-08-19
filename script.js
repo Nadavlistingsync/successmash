@@ -27,17 +27,53 @@ class YoungNetwork {
             this.supabaseEnabled = true;
             await this.loadDataFromSupabase();
             this.setupRealTimeSubscriptions();
+            this.showRealTimeStatus(true);
             this.log('YN Young Network initialized with Supabase', 'info');
         } catch (error) {
             this.log('Supabase not available, using localStorage fallback', 'warning', error);
             this.supabaseEnabled = false;
             this.loadData();
             this.loadMockData();
+            this.showRealTimeStatus(false);
         }
         
         this.setupEventListeners();
         this.startNewComparison();
         this.updateStats();
+    }
+
+    // Show real-time status indicator
+    showRealTimeStatus(enabled) {
+        // Create or update status indicator
+        let statusIndicator = document.getElementById('realtime-status');
+        if (!statusIndicator) {
+            statusIndicator = document.createElement('div');
+            statusIndicator.id = 'realtime-status';
+            statusIndicator.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 8px 16px;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: 600;
+                z-index: 1000;
+                transition: all 0.3s ease;
+            `;
+            document.body.appendChild(statusIndicator);
+        }
+
+        if (enabled) {
+            statusIndicator.textContent = '🟢 Live Updates Active';
+            statusIndicator.style.background = '#10b981';
+            statusIndicator.style.color = 'white';
+            this.log('Real-time status: ENABLED', 'info');
+        } else {
+            statusIndicator.textContent = '🔴 Offline Mode';
+            statusIndicator.style.background = '#ef4444';
+            statusIndicator.style.color = 'white';
+            this.log('Real-time status: DISABLED (using localStorage)', 'warning');
+        }
     }
 
     // Load Supabase dynamically
@@ -47,10 +83,56 @@ class YoungNetwork {
             const { supabase, db } = await import('./supabase.js');
             this.supabase = supabase;
             this.db = db;
+            
+            // Test the connection
+            await this.testSupabaseConnection();
+            
             this.log('Supabase loaded successfully', 'info');
         } catch (error) {
             throw new Error('Supabase not available: ' + error.message);
         }
+    }
+
+    // Test Supabase connection
+    async testSupabaseConnection() {
+        try {
+            // Test basic connection by trying to get users
+            const users = await this.db.getUsers();
+            this.log('Supabase connection test successful', 'info', { userCount: users.length });
+            
+            // Test real-time connection
+            await this.testRealTimeConnection();
+            
+        } catch (error) {
+            this.log('Supabase connection test failed', 'error', error);
+            throw error;
+        }
+    }
+
+    // Test real-time connection
+    async testRealTimeConnection() {
+        return new Promise((resolve, reject) => {
+            const testChannel = this.supabase
+                .channel('test_connection')
+                .on('presence', { event: 'sync' }, () => {
+                    this.log('Real-time connection test successful', 'info');
+                    testChannel.unsubscribe();
+                    resolve();
+                })
+                .subscribe((status) => {
+                    if (status === 'SUBSCRIBED') {
+                        this.log('Real-time subscription test successful', 'info');
+                        setTimeout(() => {
+                            testChannel.unsubscribe();
+                            resolve();
+                        }, 1000);
+                    } else if (status === 'CHANNEL_ERROR') {
+                        this.log('Real-time connection test failed', 'error');
+                        testChannel.unsubscribe();
+                        reject(new Error('Real-time connection failed'));
+                    }
+                });
+        });
     }
 
     // Setup real-time subscriptions
@@ -725,7 +807,46 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('- window.youngNetwork.getDebugInfo() - Get debug information');
     console.log('- window.youngNetwork.exportData() - Export debug data');
     console.log('- window.youngNetwork.log("message", "level") - Add custom log');
+    console.log('- window.youngNetwork.testRealTime() - Test real-time features');
+    console.log('- window.youngNetwork.getConnectionStatus() - Check Supabase connection');
 });
+
+// Add test function to window object
+window.testRealTime = async function() {
+    if (window.youngNetwork) {
+        console.log('Testing real-time features...');
+        try {
+            if (window.youngNetwork.supabaseEnabled) {
+                console.log('✅ Supabase is enabled');
+                console.log('✅ Real-time subscriptions active');
+                console.log('📊 Current profiles:', window.youngNetwork.profiles.length);
+                console.log('📊 Current votes:', window.youngNetwork.votes.length);
+                
+                // Test a vote to see real-time updates
+                console.log('🎯 Try voting on one tab and watch another tab update!');
+            } else {
+                console.log('❌ Supabase is disabled - using localStorage fallback');
+                console.log('📊 Current profiles:', window.youngNetwork.profiles.length);
+                console.log('📊 Current votes:', window.youngNetwork.votes.length);
+            }
+        } catch (error) {
+            console.error('Error testing real-time features:', error);
+        }
+    }
+};
+
+// Add connection status function
+window.getConnectionStatus = function() {
+    if (window.youngNetwork) {
+        return {
+            supabaseEnabled: window.youngNetwork.supabaseEnabled,
+            profilesCount: window.youngNetwork.profiles.length,
+            votesCount: window.youngNetwork.votes.length,
+            subscriptionsCount: window.youngNetwork.subscriptions.length
+        };
+    }
+    return null;
+};
 
 // Performance monitoring
 window.addEventListener('load', () => {
