@@ -1,29 +1,96 @@
-// More Cracked or Less Cracked Application - Achievement Comparison Game
-// Automatic feedback loop integrated for debugging
+// Young Network Application - Professional Achievement Comparison
+// Supabase integration with real-time features and ELO system
 
-class CrackedComparison {
+import { supabase, db } from './supabase.js';
+
+class YoungNetwork {
     constructor() {
         this.profiles = [];
         this.currentComparison = null;
         this.votes = [];
         this.stats = {
             totalVotes: 0,
-            comparisonsMade: 0
+            comparisonsMade: 0,
+            totalUsers: 0
         };
         this.eloChange = 20; // ELO points gained/lost per comparison
         this.debugMode = true; // Enable automatic feedback loop
+        this.subscriptions = []; // Real-time subscriptions
         
         this.init();
     }
 
     // Initialize the application
-    init() {
-        this.loadData();
-        this.setupEventListeners();
-        this.loadMockData();
-        this.startNewComparison();
-        this.updateStats();
-        this.log('More Cracked or Less Cracked initialized successfully', 'info');
+    async init() {
+        try {
+            await this.loadDataFromSupabase();
+            this.setupEventListeners();
+            this.setupRealTimeSubscriptions();
+            await this.startNewComparison();
+            await this.updateStats();
+            this.log('Young Network initialized successfully with Supabase', 'info');
+        } catch (error) {
+            this.log('Error initializing application', 'error', error);
+            // Fallback to mock data if Supabase is not available
+            this.loadMockData();
+            this.startNewComparison();
+            this.updateStats();
+        }
+    }
+
+    // Setup real-time subscriptions
+    setupRealTimeSubscriptions() {
+        // Subscribe to user changes
+        const usersSubscription = db.subscribeToUsers((payload) => {
+            this.log('Real-time user update', 'info', payload);
+            this.handleUserUpdate(payload);
+        });
+        this.subscriptions.push(usersSubscription);
+
+        // Subscribe to vote changes
+        const votesSubscription = db.subscribeToVotes((payload) => {
+            this.log('Real-time vote update', 'info', payload);
+            this.handleVoteUpdate(payload);
+        });
+        this.subscriptions.push(votesSubscription);
+
+        // Subscribe to statistics changes
+        const statsSubscription = db.subscribeToStatistics((payload) => {
+            this.log('Real-time stats update', 'info', payload);
+            this.handleStatsUpdate(payload);
+        });
+        this.subscriptions.push(statsSubscription);
+    }
+
+    // Handle real-time user updates
+    handleUserUpdate(payload) {
+        if (payload.eventType === 'UPDATE') {
+            const updatedUser = payload.new;
+            const index = this.profiles.findIndex(p => p.id === updatedUser.id);
+            if (index !== -1) {
+                this.profiles[index] = updatedUser;
+                this.updateLeaderboard();
+            }
+        } else if (payload.eventType === 'INSERT') {
+            this.profiles.push(payload.new);
+            this.updateLeaderboard();
+        }
+    }
+
+    // Handle real-time vote updates
+    handleVoteUpdate(payload) {
+        if (payload.eventType === 'INSERT') {
+            this.votes.push(payload.new);
+            this.updateStats();
+        }
+    }
+
+    // Handle real-time stats updates
+    handleStatsUpdate(payload) {
+        if (payload.eventType === 'UPDATE') {
+            this.stats = payload.new;
+            this.updateStatsDisplay();
+        }
     }
 
     // Automatic feedback loop for debugging
@@ -43,7 +110,7 @@ class CrackedComparison {
         console.log(`[${timestamp}] [${level.toUpperCase()}] ${message}`, data || '');
         
         // Store logs in localStorage for debugging
-        const logs = JSON.parse(localStorage.getItem('crackedComparison_logs') || '[]');
+        const logs = JSON.parse(localStorage.getItem('youngNetwork_logs') || '[]');
         logs.push(logEntry);
         
         // Keep only last 100 logs
@@ -51,7 +118,7 @@ class CrackedComparison {
             logs.splice(0, logs.length - 100);
         }
         
-        localStorage.setItem('crackedComparison_logs', JSON.stringify(logs));
+        localStorage.setItem('youngNetwork_logs', JSON.stringify(logs));
         
         // Auto-detect and report errors
         if (level === 'error') {
@@ -61,47 +128,41 @@ class CrackedComparison {
 
     // Report errors automatically
     reportError(errorLog) {
-        // In a real app, this would send to an error tracking service
         console.error('Error detected:', errorLog);
         
         // Store error for debugging
-        const errors = JSON.parse(localStorage.getItem('crackedComparison_errors') || '[]');
+        const errors = JSON.parse(localStorage.getItem('youngNetwork_errors') || '[]');
         errors.push(errorLog);
-        localStorage.setItem('crackedComparison_errors', JSON.stringify(errors));
+        localStorage.setItem('youngNetwork_errors', JSON.stringify(errors));
     }
 
-    // Load data from localStorage
-    loadData() {
+    // Load data from Supabase
+    async loadDataFromSupabase() {
         try {
-            this.profiles = JSON.parse(localStorage.getItem('crackedComparison_profiles') || '[]');
-            this.votes = JSON.parse(localStorage.getItem('crackedComparison_votes') || '[]');
-            this.stats = JSON.parse(localStorage.getItem('crackedComparison_stats') || JSON.stringify(this.stats));
-            this.log('Data loaded from localStorage', 'info', { profiles: this.profiles.length, votes: this.votes.length });
+            // Load users/profiles
+            this.profiles = await db.getUsers();
+            this.log('Users loaded from Supabase', 'info', { count: this.profiles.length });
+
+            // Load votes
+            this.votes = await db.getVotes();
+            this.log('Votes loaded from Supabase', 'info', { count: this.votes.length });
+
+            // Load statistics
+            this.stats = await db.getStatistics();
+            this.log('Statistics loaded from Supabase', 'info', this.stats);
+
         } catch (error) {
-            this.log('Error loading data from localStorage', 'error', error);
-            this.profiles = [];
-            this.votes = [];
+            this.log('Error loading data from Supabase', 'error', error);
+            throw error;
         }
     }
 
-    // Save data to localStorage
-    saveData() {
-        try {
-                    localStorage.setItem('crackedComparison_profiles', JSON.stringify(this.profiles));
-        localStorage.setItem('crackedComparison_votes', JSON.stringify(this.votes));
-        localStorage.setItem('crackedComparison_stats', JSON.stringify(this.stats));
-            this.log('Data saved to localStorage', 'info');
-        } catch (error) {
-            this.log('Error saving data to localStorage', 'error', error);
-        }
-    }
-
-    // Load mock data for initial testing
+    // Load mock data for fallback
     loadMockData() {
         if (this.profiles.length === 0) {
             this.profiles = [
                 {
-                    id: 1,
+                    id: '1',
                     name: "Sarah Chen",
                     title: "Senior Software Engineer",
                     university: "Stanford University",
@@ -121,7 +182,7 @@ class CrackedComparison {
                     elo: 1200
                 },
                 {
-                    id: 2,
+                    id: '2',
                     name: "Marcus Rodriguez",
                     title: "Product Manager",
                     university: "Harvard University",
@@ -141,7 +202,7 @@ class CrackedComparison {
                     elo: 1200
                 },
                 {
-                    id: 3,
+                    id: '3',
                     name: "Emily Watson",
                     title: "Data Scientist",
                     university: "MIT",
@@ -161,7 +222,7 @@ class CrackedComparison {
                     elo: 1200
                 },
                 {
-                    id: 4,
+                    id: '4',
                     name: "David Kim",
                     title: "Investment Banker",
                     university: "University of Pennsylvania (Wharton)",
@@ -181,7 +242,7 @@ class CrackedComparison {
                     elo: 1200
                 },
                 {
-                    id: 5,
+                    id: '5',
                     name: "Alex Johnson",
                     title: "Creative Director",
                     university: "Parsons School of Design",
@@ -201,7 +262,7 @@ class CrackedComparison {
                     elo: 1200
                 },
                 {
-                    id: 6,
+                    id: '6',
                     name: "Priya Patel",
                     title: "Medical Director",
                     university: "Johns Hopkins University",
@@ -221,7 +282,6 @@ class CrackedComparison {
                     elo: 1200
                 }
             ];
-            this.saveData();
             this.log('Mock data loaded', 'info', { profilesCount: this.profiles.length });
         }
     }
@@ -288,7 +348,7 @@ class CrackedComparison {
     }
 
     // Start a new comparison
-    startNewComparison() {
+    async startNewComparison() {
         if (this.profiles.length < 2) {
             this.log('Not enough profiles for comparison', 'warning');
             return;
@@ -329,6 +389,7 @@ class CrackedComparison {
         const titleElement = document.getElementById(`${side}-title`);
         const universityElement = document.getElementById(`${side}-university`);
         const companyElement = document.getElementById(`${side}-company`);
+        const eloElement = document.getElementById(`${side}-elo`);
         const linkedinElement = document.getElementById(`${side}-linkedin`);
         const achievementsElement = document.getElementById(`${side}-achievements`);
 
@@ -347,6 +408,7 @@ class CrackedComparison {
         titleElement.textContent = candidate.title;
         universityElement.textContent = candidate.university || 'University not specified';
         companyElement.textContent = candidate.company;
+        eloElement.textContent = candidate.elo || 1200;
 
         // Update LinkedIn link
         if (candidate.linkedinUrl) {
@@ -367,7 +429,7 @@ class CrackedComparison {
     }
 
     // Handle voting
-    handleVote(winnerSide) {
+    async handleVote(winnerSide) {
         if (!this.currentComparison) return;
 
         const winner = this.currentComparison[winnerSide];
@@ -375,53 +437,48 @@ class CrackedComparison {
 
         // Record vote
         const vote = {
-            id: Date.now(),
-            winner: winner.id,
-            loser: loser.id,
-            winnerName: winner.name,
-            loserName: loser.name,
-            winnerEloBefore: winner.elo,
-            loserEloBefore: loser.elo,
-            timestamp: Date.now()
+            winner_id: winner.id,
+            loser_id: loser.id,
+            winner_elo_before: winner.elo,
+            loser_elo_before: loser.elo,
+            winner_elo_after: winner.elo + this.eloChange,
+            loser_elo_after: Math.max(0, loser.elo - this.eloChange),
+            elo_change: this.eloChange
         };
 
-        this.votes.push(vote);
+        try {
+            // Create vote in database
+            await db.createVote(vote);
 
-        // Update ELO ratings
-        winner.wins++;
-        winner.totalVotes++;
-        winner.elo += this.eloChange;
-        
-        loser.totalVotes++;
-        loser.elo -= this.eloChange;
+            // Update local data
+            winner.wins++;
+            winner.totalVotes++;
+            winner.elo += this.eloChange;
+            
+            loser.totalVotes++;
+            loser.elo = Math.max(0, loser.elo - this.eloChange);
 
-        // Ensure ELO doesn't go below 0
-        if (loser.elo < 0) loser.elo = 0;
+            // Update stats
+            this.stats.totalVotes++;
+            this.stats.comparisonsMade++;
 
-        // Update vote with ELO changes
-        vote.winnerEloAfter = winner.elo;
-        vote.loserEloAfter = loser.elo;
-        vote.eloChange = this.eloChange;
+            // Show success modal
+            this.showModal();
 
-        // Update stats
-        this.stats.totalVotes++;
-        this.stats.comparisonsMade++;
+            // Log vote
+            this.log('Vote recorded', 'info', vote);
 
-        // Save data
-        this.saveData();
+            // Start new comparison after delay
+            setTimeout(() => {
+                this.hideModal();
+                this.startNewComparison();
+                this.updateStats();
+            }, 2000);
 
-        // Show success modal
-        this.showModal();
-
-        // Log vote
-        this.log('Vote recorded', 'info', vote);
-
-        // Start new comparison after delay
-        setTimeout(() => {
-            this.hideModal();
-            this.startNewComparison();
-            this.updateStats();
-        }, 2000);
+        } catch (error) {
+            this.log('Error recording vote', 'error', error);
+            alert('Error recording vote. Please try again.');
+        }
     }
 
     // Calculate cracked score
@@ -444,8 +501,14 @@ class CrackedComparison {
 
     // Update stats display
     updateStats() {
-        document.getElementById('total-votes').textContent = this.stats.totalVotes;
-        document.getElementById('comparisons-made').textContent = this.stats.comparisonsMade;
+        document.getElementById('total-votes').textContent = this.stats.totalVotes || 0;
+        document.getElementById('comparisons-made').textContent = this.stats.totalComparisons || 0;
+        document.getElementById('total-users').textContent = this.stats.totalUsers || this.profiles.length;
+    }
+
+    // Update stats display (for real-time updates)
+    updateStatsDisplay() {
+        this.updateStats();
     }
 
     // Update leaderboard
@@ -453,8 +516,8 @@ class CrackedComparison {
         const leaderboardList = document.getElementById('leaderboard-list');
         leaderboardList.innerHTML = '';
 
-        // Sort profiles by cracked score
-        const sortedProfiles = [...this.profiles].sort((a, b) => b.crackedScore - a.crackedScore);
+        // Sort profiles by ELO rating
+        const sortedProfiles = [...this.profiles].sort((a, b) => b.elo - a.elo);
 
         sortedProfiles.forEach((profile, index) => {
             const item = document.createElement('div');
@@ -462,7 +525,7 @@ class CrackedComparison {
             item.innerHTML = `
                 <span class="rank">${index + 1}</span>
                 <span class="name">${profile.name}</span>
-                <span class="score">${profile.crackedScore}</span>
+                <span class="score">${profile.elo}</span>
                 <span class="wins">${profile.wins}</span>
                 <span class="total-votes">${profile.totalVotes}</span>
             `;
@@ -473,23 +536,22 @@ class CrackedComparison {
     }
 
     // Add new profile
-    addNewProfile() {
+    async addNewProfile() {
         const form = document.getElementById('add-profile-form');
         const formData = new FormData(form);
 
         const newProfile = {
-            id: Date.now(),
             name: formData.get('name'),
             title: formData.get('title'),
             university: formData.get('university'),
             company: formData.get('company'),
-            imageUrl: formData.get('imageUrl') || '',
-            linkedinUrl: formData.get('linkedinUrl') || '',
+            image_url: formData.get('imageUrl') || '',
+            linkedin_url: formData.get('linkedinUrl') || '',
             achievements: formData.get('achievements').split('\n').filter(a => a.trim()),
             industry: formData.get('industry'),
+            elo: 1200,
             wins: 0,
-            totalVotes: 0,
-            crackedScore: 0
+            total_votes: 0
         };
 
         // Validate profile
@@ -499,15 +561,20 @@ class CrackedComparison {
             return;
         }
 
-        this.profiles.push(newProfile);
-        this.saveData();
-        form.reset();
+        try {
+            await db.createUser(newProfile);
+            await this.loadDataFromSupabase(); // Reload data to include new profile
+            form.reset();
 
-        // Switch back to compare view
-        this.switchView('compare');
-        this.startNewComparison();
+            // Switch back to compare view
+            this.switchView('compare');
+            await this.startNewComparison();
 
-        this.log('New profile added', 'info', { name: newProfile.name, achievements: newProfile.achievements.length });
+            this.log('New profile added', 'info', { name: newProfile.name, achievements: newProfile.achievements.length });
+        } catch (error) {
+            this.log('Error adding profile', 'error', error);
+            alert('Error adding profile. Please try again.');
+        }
     }
 
     // Get debug information
@@ -518,9 +585,9 @@ class CrackedComparison {
             stats: this.stats,
             currentComparison: this.currentComparison,
             localStorage: {
-                profiles: localStorage.getItem('crackedComparison_profiles') ? 'exists' : 'missing',
-                votes: localStorage.getItem('crackedComparison_votes') ? 'exists' : 'missing',
-                stats: localStorage.getItem('crackedComparison_stats') ? 'exists' : 'missing'
+                profiles: localStorage.getItem('youngNetwork_profiles') ? 'exists' : 'missing',
+                votes: localStorage.getItem('youngNetwork_votes') ? 'exists' : 'missing',
+                stats: localStorage.getItem('youngNetwork_stats') ? 'exists' : 'missing'
             }
         };
     }
@@ -532,39 +599,55 @@ class CrackedComparison {
             votes: this.votes,
             stats: this.stats,
             debugInfo: this.getDebugInfo(),
-            logs: JSON.parse(localStorage.getItem('crackedComparison_logs') || '[]'),
-            errors: JSON.parse(localStorage.getItem('crackedComparison_errors') || '[]')
+            logs: JSON.parse(localStorage.getItem('youngNetwork_logs') || '[]'),
+            errors: JSON.parse(localStorage.getItem('youngNetwork_errors') || '[]')
         };
 
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `crackedComparison-debug-${Date.now()}.json`;
+        a.download = `youngNetwork-debug-${Date.now()}.json`;
         a.click();
         URL.revokeObjectURL(url);
 
         this.log('Debug data exported', 'info');
     }
+
+    // Cleanup subscriptions
+    cleanup() {
+        this.subscriptions.forEach(subscription => {
+            if (subscription && subscription.unsubscribe) {
+                subscription.unsubscribe();
+            }
+        });
+    }
 }
 
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.crackedComparison = new CrackedComparison();
+    window.youngNetwork = new YoungNetwork();
     
     // Add debug commands to console
-    console.log('More Cracked or Less Cracked loaded! Debug commands available:');
-    console.log('- window.crackedComparison.getDebugInfo() - Get debug information');
-    console.log('- window.crackedComparison.exportData() - Export debug data');
-    console.log('- window.crackedComparison.log("message", "level") - Add custom log');
+    console.log('Young Network loaded! Debug commands available:');
+    console.log('- window.youngNetwork.getDebugInfo() - Get debug information');
+    console.log('- window.youngNetwork.exportData() - Export debug data');
+    console.log('- window.youngNetwork.log("message", "level") - Add custom log');
 });
 
 // Performance monitoring
 window.addEventListener('load', () => {
     const loadTime = performance.now();
-    console.log(`More Cracked or Less Cracked loaded in ${loadTime.toFixed(2)}ms`);
+    console.log(`Young Network loaded in ${loadTime.toFixed(2)}ms`);
     
-    if (window.crackedComparison) {
-        window.crackedComparison.log('Page load complete', 'info', { loadTime: loadTime.toFixed(2) });
+    if (window.youngNetwork) {
+        window.youngNetwork.log('Page load complete', 'info', { loadTime: loadTime.toFixed(2) });
+    }
+});
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', () => {
+    if (window.youngNetwork) {
+        window.youngNetwork.cleanup();
     }
 });

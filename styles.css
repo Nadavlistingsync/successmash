@@ -208,7 +208,28 @@ body {
     margin-bottom: 10px;
 }
 
+.elo-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 15px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    border-radius: 20px;
+    font-weight: 600;
+}
 
+.elo-label {
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.elo-score {
+    color: #333;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
 
 .linkedin-link {
     text-align: center;

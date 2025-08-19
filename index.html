@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>More Cracked or Less Cracked - Achievement Comparison</title>
+    <title>Young Network - Professional Achievement Comparison</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -14,9 +14,9 @@
         <header class="header">
             <h1 class="logo">
                 <i class="fas fa-trophy"></i>
-                More Cracked or Less Cracked
+                Young Network
             </h1>
-            <p class="tagline">Compare achievements and see who's more cracked</p>
+            <p class="tagline">Compare professional achievements and build your network</p>
         </header>
 
         <!-- Navigation -->
@@ -53,7 +53,10 @@
                                 <p id="left-title" class="title">Loading...</p>
                                 <p id="left-university" class="university">Loading...</p>
                                 <p id="left-company" class="company">Loading...</p>
-
+                                <div class="elo-display">
+                                    <span class="elo-label">ELO:</span>
+                                    <span id="left-elo" class="elo-score">1200</span>
+                                </div>
                                 <div class="linkedin-link" id="left-linkedin" style="display: none;">
                                     <a href="#" target="_blank" class="linkedin-btn">
                                         <i class="fab fa-linkedin"></i>
@@ -69,7 +72,7 @@
                             </div>
                             <button class="vote-btn" data-candidate="left">
                                 <i class="fas fa-thumbs-up"></i>
-                                More Cracked
+                                More Successful
                             </button>
                         </div>
                     </div>
@@ -93,7 +96,10 @@
                                 <p id="right-title" class="title">Loading...</p>
                                 <p id="right-university" class="university">Loading...</p>
                                 <p id="right-company" class="company">Loading...</p>
-
+                                <div class="elo-display">
+                                    <span class="elo-label">ELO:</span>
+                                    <span id="right-elo" class="elo-score">1200</span>
+                                </div>
                                 <div class="linkedin-link" id="right-linkedin" style="display: none;">
                                     <a href="#" target="_blank" class="linkedin-btn">
                                         <i class="fab fa-linkedin"></i>
@@ -109,7 +115,7 @@
                             </div>
                             <button class="vote-btn" data-candidate="right">
                                 <i class="fas fa-thumbs-up"></i>
-                                More Cracked
+                                More Successful
                             </button>
                         </div>
                     </div>
@@ -124,17 +130,21 @@
                         <span class="stat-number" id="comparisons-made">0</span>
                         <span class="stat-label">Comparisons</span>
                     </div>
+                    <div class="stat">
+                        <span class="stat-number" id="total-users">0</span>
+                        <span class="stat-label">Profiles</span>
+                    </div>
                 </div>
             </div>
 
             <!-- Leaderboard View -->
             <div id="leaderboard-view" class="view">
-                <h2>Cracked Leaderboard</h2>
+                <h2>Professional Leaderboard</h2>
                 <div class="leaderboard-container">
                     <div class="leaderboard-header">
                         <span>Rank</span>
                         <span>Name</span>
-                        <span>Cracked Score</span>
+                        <span>ELO Rating</span>
                         <span>Wins</span>
                         <span>Total Votes</span>
                     </div>
@@ -146,7 +156,7 @@
 
             <!-- Add Profile View -->
             <div id="add-profile-view" class="view">
-                <h2>Add New Profile</h2>
+                <h2>Add New Professional Profile</h2>
                 <form id="add-profile-form" class="add-profile-form">
                     <div class="form-group">
                         <label for="name">Full Name *</label>
@@ -167,8 +177,6 @@
                         <label for="company">Company/Organization *</label>
                         <input type="text" id="company" name="company" required>
                     </div>
-                    
-
                     
                     <div class="form-group">
                         <label for="image-url">Profile Image URL</label>
@@ -208,7 +216,7 @@
 
         <!-- Footer -->
         <footer class="footer">
-            <p>&copy; 2024 More Cracked or Less Cracked. Compare achievements responsibly.</p>
+            <p>&copy; 2024 Young Network. Compare professional achievements responsibly.</p>
         </footer>
     </div>
 
@@ -228,6 +236,6 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
