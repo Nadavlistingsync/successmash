@@ -1,12 +1,8 @@
 import { createClient } from '@supabase/supabase-js'
-
-// Supabase configuration
-// Replace these with your actual Supabase project URL and anon key
-const supabaseUrl = 'YOUR_SUPABASE_PROJECT_URL'
-const supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY'
+import { SUPABASE_CONFIG } from './supabase-config.js'
 
 // Create Supabase client
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey)
 
 // Database helper functions
 export const db = {
@@ -31,11 +27,11 @@ export const db = {
     return data[0]
   },
 
-  async updateUserElo(userId, newElo) {
+  async updateUser(userId, updates) {
     const { data, error } = await supabase
       .from('users')
       .update({ 
-        elo: newElo,
+        ...updates,
         updated_at: new Date().toISOString()
       })
       .eq('id', userId)
@@ -45,19 +41,15 @@ export const db = {
     return data[0]
   },
 
+  async updateUserElo(userId, newElo) {
+    return this.updateUser(userId, { elo: newElo })
+  },
+
   async updateUserStats(userId, wins, totalVotes) {
-    const { data, error } = await supabase
-      .from('users')
-      .update({ 
-        wins: wins,
-        total_votes: totalVotes,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', userId)
-      .select()
-    
-    if (error) throw error
-    return data[0]
+    return this.updateUser(userId, { 
+      wins: wins,
+      total_votes: totalVotes
+    })
   },
 
   // Votes
@@ -86,6 +78,7 @@ export const db = {
     const { data, error } = await supabase
       .from('statistics')
       .select('*')
+      .eq('id', 'global')
       .single()
     
     if (error) throw error
@@ -109,9 +102,9 @@ export const db = {
   // Real-time subscriptions
   subscribeToUsers(callback) {
     return supabase
-      .channel('users')
+      .channel('users_changes')
       .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'users' }, 
+        { event: '*', schema: 'public', table: 'users' },
         callback
       )
       .subscribe()
@@ -119,9 +112,9 @@ export const db = {
 
   subscribeToVotes(callback) {
     return supabase
-      .channel('votes')
+      .channel('votes_changes')
       .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'votes' }, 
+        { event: '*', schema: 'public', table: 'votes' },
         callback
       )
       .subscribe()
@@ -129,9 +122,9 @@ export const db = {
 
   subscribeToStatistics(callback) {
     return supabase
-      .channel('statistics')
+      .channel('statistics_changes')
       .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'statistics' }, 
+        { event: '*', schema: 'public', table: 'statistics' },
         callback
       )
       .subscribe()
@@ -145,7 +138,8 @@ export const auth = {
       email,
       password
     })
-    return { data, error }
+    if (error) throw error
+    return data
   },
 
   async signIn(email, password) {
@@ -153,12 +147,13 @@ export const auth = {
       email,
       password
     })
-    return { data, error }
+    if (error) throw error
+    return data
   },
 
   async signOut() {
     const { error } = await supabase.auth.signOut()
-    return { error }
+    if (error) throw error
   },
 
   async getCurrentUser() {

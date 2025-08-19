@@ -1,5 +1,5 @@
 // YN Young Network Application - Professional Achievement Comparison
-// ELO system with localStorage fallback
+// Supabase integration with real-time features and localStorage fallback
 
 class YoungNetwork {
     constructor() {
@@ -13,18 +13,148 @@ class YoungNetwork {
         };
         this.eloChange = 20; // ELO points gained/lost per comparison
         this.debugMode = true; // Enable automatic feedback loop
+        this.supabaseEnabled = false; // Track if Supabase is available
+        this.subscriptions = []; // Real-time subscriptions
         
         this.init();
     }
 
     // Initialize the application
-    init() {
-        this.loadData();
+    async init() {
+        try {
+            // Try to load Supabase
+            await this.loadSupabase();
+            this.supabaseEnabled = true;
+            await this.loadDataFromSupabase();
+            this.setupRealTimeSubscriptions();
+            this.log('YN Young Network initialized with Supabase', 'info');
+        } catch (error) {
+            this.log('Supabase not available, using localStorage fallback', 'warning', error);
+            this.supabaseEnabled = false;
+            this.loadData();
+            this.loadMockData();
+        }
+        
         this.setupEventListeners();
-        this.loadMockData();
         this.startNewComparison();
         this.updateStats();
-        this.log('YN Young Network initialized successfully', 'info');
+    }
+
+    // Load Supabase dynamically
+    async loadSupabase() {
+        try {
+            // Dynamic import of Supabase
+            const { supabase, db } = await import('./supabase.js');
+            this.supabase = supabase;
+            this.db = db;
+            this.log('Supabase loaded successfully', 'info');
+        } catch (error) {
+            throw new Error('Supabase not available: ' + error.message);
+        }
+    }
+
+    // Setup real-time subscriptions
+    setupRealTimeSubscriptions() {
+        if (!this.supabaseEnabled) return;
+
+        try {
+            // Subscribe to user changes
+            const usersSubscription = this.supabase
+                .channel('users_changes')
+                .on('postgres_changes', 
+                    { event: '*', schema: 'public', table: 'users' },
+                    (payload) => {
+                        this.log('Real-time user update', 'info', payload);
+                        this.handleUserUpdate(payload);
+                    }
+                )
+                .subscribe();
+
+            // Subscribe to vote changes
+            const votesSubscription = this.supabase
+                .channel('votes_changes')
+                .on('postgres_changes', 
+                    { event: '*', schema: 'public', table: 'votes' },
+                    (payload) => {
+                        this.log('Real-time vote update', 'info', payload);
+                        this.handleVoteUpdate(payload);
+                    }
+                )
+                .subscribe();
+
+            // Subscribe to statistics changes
+            const statsSubscription = this.supabase
+                .channel('statistics_changes')
+                .on('postgres_changes', 
+                    { event: '*', schema: 'public', table: 'statistics' },
+                    (payload) => {
+                        this.log('Real-time stats update', 'info', payload);
+                        this.handleStatsUpdate(payload);
+                    }
+                )
+                .subscribe();
+
+            this.subscriptions = [usersSubscription, votesSubscription, statsSubscription];
+            this.log('Real-time subscriptions setup complete', 'info');
+        } catch (error) {
+            this.log('Error setting up real-time subscriptions', 'error', error);
+        }
+    }
+
+    // Handle real-time user updates
+    handleUserUpdate(payload) {
+        if (payload.eventType === 'UPDATE') {
+            const updatedUser = payload.new;
+            const index = this.profiles.findIndex(p => p.id === updatedUser.id);
+            if (index !== -1) {
+                this.profiles[index] = updatedUser;
+                this.updateLeaderboard();
+                this.log('User updated via real-time', 'info', updatedUser);
+            }
+        } else if (payload.eventType === 'INSERT') {
+            this.profiles.push(payload.new);
+            this.updateLeaderboard();
+            this.log('New user added via real-time', 'info', payload.new);
+        }
+    }
+
+    // Handle real-time vote updates
+    handleVoteUpdate(payload) {
+        if (payload.eventType === 'INSERT') {
+            this.votes.push(payload.new);
+            this.updateStats();
+            this.log('New vote received via real-time', 'info', payload.new);
+        }
+    }
+
+    // Handle real-time stats updates
+    handleStatsUpdate(payload) {
+        if (payload.eventType === 'UPDATE') {
+            this.stats = payload.new;
+            this.updateStatsDisplay();
+            this.log('Stats updated via real-time', 'info', payload.new);
+        }
+    }
+
+    // Load data from Supabase
+    async loadDataFromSupabase() {
+        try {
+            // Load users/profiles
+            this.profiles = await this.db.getUsers();
+            this.log('Users loaded from Supabase', 'info', { count: this.profiles.length });
+
+            // Load votes
+            this.votes = await this.db.getVotes();
+            this.log('Votes loaded from Supabase', 'info', { count: this.votes.length });
+
+            // Load statistics
+            this.stats = await this.db.getStatistics();
+            this.log('Statistics loaded from Supabase', 'info', this.stats);
+
+        } catch (error) {
+            this.log('Error loading data from Supabase', 'error', error);
+            throw error;
+        }
     }
 
     // Automatic feedback loop for debugging
@@ -70,7 +200,7 @@ class YoungNetwork {
         localStorage.setItem('ynYoungNetwork_errors', JSON.stringify(errors));
     }
 
-    // Load data from localStorage
+    // Load data from localStorage (fallback)
     loadData() {
         try {
             this.profiles = JSON.parse(localStorage.getItem('ynYoungNetwork_profiles') || '[]');
@@ -84,7 +214,7 @@ class YoungNetwork {
         }
     }
 
-    // Save data to localStorage
+    // Save data to localStorage (fallback)
     saveData() {
         try {
             localStorage.setItem('ynYoungNetwork_profiles', JSON.stringify(this.profiles));
@@ -388,9 +518,14 @@ class YoungNetwork {
 
         try {
             // Create vote in database
-            // This part is now a placeholder for localStorage
-            this.votes.push(vote);
-            this.saveData(); // Save updated votes
+            if (this.supabaseEnabled) {
+                await this.db.createVote(vote);
+                this.log('Vote recorded in Supabase', 'info', vote);
+            } else {
+                this.votes.push(vote);
+                this.saveData(); // Save updated votes
+                this.log('Vote recorded in localStorage (fallback)', 'info', vote);
+            }
 
             // Update local data
             winner.wins++;
@@ -403,7 +538,13 @@ class YoungNetwork {
             // Update stats
             this.stats.totalVotes++;
             this.stats.comparisonsMade++;
-            this.saveData(); // Save updated stats
+            if (this.supabaseEnabled) {
+                await this.db.updateStatistics(this.stats);
+                this.log('Stats updated in Supabase', 'info', this.stats);
+            } else {
+                this.saveData(); // Save updated stats
+                this.log('Stats updated in localStorage (fallback)', 'info', this.stats);
+            }
 
             // Show success modal
             this.showModal();
@@ -507,8 +648,14 @@ class YoungNetwork {
 
         try {
             // This part is now a placeholder for Supabase
-            this.profiles.push(newProfile);
-            this.saveData(); // Save updated profiles
+            if (this.supabaseEnabled) {
+                await this.db.createUser(newProfile);
+                this.log('New profile added to Supabase', 'info', newProfile);
+            } else {
+                this.profiles.push(newProfile);
+                this.saveData(); // Save updated profiles
+                this.log('New profile added to localStorage (fallback)', 'info', newProfile);
+            }
             form.reset();
 
             // Switch back to compare view
@@ -561,7 +708,11 @@ class YoungNetwork {
 
     // Cleanup subscriptions
     cleanup() {
-        // No subscriptions to unsubscribe in localStorage fallback
+        if (this.supabaseEnabled) {
+            this.subscriptions.forEach(sub => sub.unsubscribe());
+            this.subscriptions = [];
+            this.log('Supabase subscriptions cleaned up', 'info');
+        }
     }
 }
 
