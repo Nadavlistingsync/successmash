@@ -9,7 +9,7 @@ body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     line-height: 1.6;
     color: #333;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #f8f9fa;
     min-height: 100vh;
 }
 
@@ -25,65 +25,110 @@ body {
 /* Header Styles */
 .header {
     text-align: center;
-    margin-bottom: 30px;
-    color: white;
+    margin-bottom: 40px;
+    padding: 40px 0;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
-.logo {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 10px;
+.logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.yn-logo {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
 }
 
-.logo i {
-    color: #ffd700;
+.yn-text {
+    font-size: 4rem;
+    font-weight: 800;
+    color: #1a365d;
+    letter-spacing: -2px;
+    line-height: 1;
+    position: relative;
+}
+
+.yn-text::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, #1a365d 0%, #2d5a87 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.young-text,
+.network-text {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1a365d;
+    letter-spacing: 2px;
+    text-transform: uppercase;
 }
 
 .tagline {
     font-size: 1.1rem;
-    opacity: 0.9;
-    font-weight: 300;
+    color: #64748b;
+    font-weight: 400;
+    margin-top: 10px;
 }
 
 /* Navigation Styles */
 .nav {
     display: flex;
     justify-content: center;
-    gap: 10px;
+    gap: 15px;
     margin-bottom: 30px;
     flex-wrap: wrap;
 }
 
 .nav-btn {
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    color: white;
+    background: white;
+    border: 2px solid #e2e8f0;
+    color: #1a365d;
     padding: 12px 24px;
-    border-radius: 25px;
+    border-radius: 12px;
     cursor: pointer;
     font-size: 1rem;
-    font-weight: 500;
+    font-weight: 600;
     transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
     gap: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .nav-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
+    background: #1a365d;
+    border-color: #1a365d;
+    color: white;
     transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(26, 54, 93, 0.2);
 }
 
 .nav-btn.active {
-    background: rgba(255, 255, 255, 0.25);
-    border-color: rgba(255, 255, 255, 0.4);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    background: #1a365d;
+    border-color: #1a365d;
+    color: white;
+    box-shadow: 0 8px 20px rgba(26, 54, 93, 0.2);
 }
 
 /* Main Content Styles */
@@ -118,10 +163,11 @@ body {
     background: white;
     border-radius: 20px;
     padding: 30px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    border: 1px solid #e2e8f0;
 }
 
 .candidate-card::before {
@@ -131,12 +177,12 @@ body {
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, #667eea, #764ba2);
+    background: linear-gradient(90deg, #1a365d, #2d5a87);
 }
 
 .candidate-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
 }
 
 .profile-image {
@@ -150,12 +196,12 @@ body {
     height: 120px;
     border-radius: 50%;
     object-fit: cover;
-    border: 4px solid #f0f0f0;
+    border: 4px solid #e2e8f0;
     transition: all 0.3s ease;
 }
 
 .profile-image img:hover {
-    border-color: #667eea;
+    border-color: #1a365d;
     transform: scale(1.05);
 }
 
@@ -163,17 +209,17 @@ body {
     width: 120px;
     height: 120px;
     border-radius: 50%;
-    background: #f0f0f0;
+    background: #f1f5f9;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto;
-    border: 4px solid #e0e0e0;
+    border: 4px solid #e2e8f0;
 }
 
 .image-placeholder i {
     font-size: 3rem;
-    color: #ccc;
+    color: #94a3b8;
 }
 
 .candidate-info {
@@ -183,28 +229,28 @@ body {
 
 .candidate-info h2 {
     font-size: 1.5rem;
-    font-weight: 600;
+    font-weight: 700;
     margin-bottom: 5px;
-    color: #333;
+    color: #1a365d;
 }
 
 .title {
     font-size: 1.1rem;
-    color: #667eea;
-    font-weight: 500;
+    color: #2d5a87;
+    font-weight: 600;
     margin-bottom: 5px;
 }
 
 .university {
     font-size: 1rem;
-    color: #28a745;
-    font-weight: 500;
+    color: #059669;
+    font-weight: 600;
     margin-bottom: 5px;
 }
 
 .company {
     font-size: 1rem;
-    color: #666;
+    color: #64748b;
     margin-bottom: 10px;
 }
 
@@ -215,20 +261,20 @@ body {
     gap: 8px;
     margin-bottom: 15px;
     padding: 8px 16px;
-    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
     border-radius: 20px;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .elo-label {
-    color: #333;
+    color: #92400e;
     font-size: 0.9rem;
 }
 
 .elo-score {
-    color: #333;
+    color: #92400e;
     font-size: 1.1rem;
-    font-weight: 700;
+    font-weight: 800;
 }
 
 .linkedin-link {
@@ -246,7 +292,7 @@ body {
     padding: 8px 16px;
     border-radius: 20px;
     font-size: 0.9rem;
-    font-weight: 500;
+    font-weight: 600;
     transition: all 0.3s ease;
 }
 
@@ -267,8 +313,9 @@ body {
 .achievements h3 {
     font-size: 1.1rem;
     margin-bottom: 10px;
-    color: #333;
+    color: #1a365d;
     text-align: center;
+    font-weight: 700;
 }
 
 .achievements ul {
@@ -277,24 +324,25 @@ body {
 }
 
 .achievements li {
-    background: #f8f9fa;
-    padding: 8px 12px;
-    margin-bottom: 5px;
-    border-radius: 8px;
+    background: #f8fafc;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    border-radius: 10px;
     font-size: 0.9rem;
-    color: #555;
-    border-left: 3px solid #667eea;
+    color: #475569;
+    border-left: 3px solid #1a365d;
+    font-weight: 500;
 }
 
 .vote-btn {
     width: 100%;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #1a365d, #2d5a87);
     color: white;
     border: none;
     padding: 15px;
     border-radius: 12px;
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
@@ -305,7 +353,7 @@ body {
 
 .vote-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 8px 20px rgba(26, 54, 93, 0.3);
 }
 
 .vote-btn:active {
@@ -327,11 +375,11 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    font-weight: 700;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    font-weight: 800;
     font-size: 1.2rem;
-    color: #667eea;
-    border: 3px solid #f0f0f0;
+    color: #1a365d;
+    border: 3px solid #e2e8f0;
 }
 
 /* Stats Styles */
@@ -340,23 +388,31 @@ body {
     justify-content: center;
     gap: 40px;
     margin-top: 30px;
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .stat {
     text-align: center;
-    color: white;
+    color: #1a365d;
 }
 
 .stat-number {
     display: block;
-    font-size: 2rem;
-    font-weight: 700;
+    font-size: 2.5rem;
+    font-weight: 800;
     margin-bottom: 5px;
+    color: #1a365d;
 }
 
 .stat-label {
     font-size: 0.9rem;
-    opacity: 0.8;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 /* Leaderboard Styles */
@@ -364,7 +420,8 @@ body {
     background: white;
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
 }
 
 .leaderboard-header {
@@ -372,10 +429,13 @@ body {
     grid-template-columns: 80px 2fr 1fr 1fr 1fr;
     gap: 20px;
     padding: 20px;
-    background: #f8f9fa;
-    font-weight: 600;
-    color: #333;
-    border-bottom: 2px solid #e9ecef;
+    background: #f8fafc;
+    font-weight: 700;
+    color: #1a365d;
+    border-bottom: 2px solid #e2e8f0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
 }
 
 .leaderboard-list {
@@ -388,28 +448,35 @@ body {
     grid-template-columns: 80px 2fr 1fr 1fr 1fr;
     gap: 20px;
     padding: 15px 20px;
-    border-bottom: 1px solid #e9ecef;
+    border-bottom: 1px solid #e2e8f0;
     transition: background-color 0.3s ease;
+    font-weight: 500;
 }
 
 .leaderboard-item:hover {
-    background: #f8f9fa;
+    background: #f8fafc;
 }
 
 .leaderboard-item:nth-child(1) {
-    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #92400e;
+    font-weight: 700;
 }
 
 .leaderboard-item:nth-child(2) {
-    background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
+    background: linear-gradient(135deg, #e5e7eb, #d1d5db);
+    color: #374151;
+    font-weight: 700;
 }
 
 .leaderboard-item:nth-child(3) {
-    background: linear-gradient(135deg, #cd7f32, #daa520);
+    background: linear-gradient(135deg, #fcd34d, #f59e0b);
+    color: #92400e;
+    font-weight: 700;
 }
 
 .rank {
-    font-weight: 700;
+    font-weight: 800;
     font-size: 1.2rem;
 }
 
@@ -433,15 +500,17 @@ body {
     background: white;
     padding: 40px;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
     max-width: 600px;
     margin: 0 auto;
+    border: 1px solid #e2e8f0;
 }
 
 .add-profile-form h2 {
     text-align: center;
     margin-bottom: 30px;
-    color: #333;
+    color: #1a365d;
+    font-weight: 700;
 }
 
 .form-group {
@@ -451,8 +520,8 @@ body {
 .form-group label {
     display: block;
     margin-bottom: 8px;
-    font-weight: 500;
-    color: #333;
+    font-weight: 600;
+    color: #1a365d;
 }
 
 .form-group input,
@@ -460,29 +529,31 @@ body {
 .form-group textarea {
     width: 100%;
     padding: 12px 16px;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
     font-size: 1rem;
-    transition: border-color 0.3s ease;
+    transition: all 0.3s ease;
+    background: #f8fafc;
 }
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #1a365d;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.1);
 }
 
 .submit-btn {
     width: 100%;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #1a365d, #2d5a87);
     color: white;
     border: none;
     padding: 15px;
     border-radius: 12px;
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
@@ -494,7 +565,7 @@ body {
 
 .submit-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 8px 20px rgba(26, 54, 93, 0.3);
 }
 
 /* Modal Styles */
@@ -519,6 +590,7 @@ body {
     max-width: 400px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     animation: modalSlideIn 0.3s ease-out;
+    border: 1px solid #e2e8f0;
 }
 
 @keyframes modalSlideIn {
@@ -534,15 +606,17 @@ body {
 
 .modal-header {
     padding: 20px;
-    border-bottom: 1px solid #e9ecef;
+    border-bottom: 1px solid #e2e8f0;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background: #f8fafc;
 }
 
 .modal-header h3 {
     margin: 0;
-    color: #333;
+    color: #1a365d;
+    font-weight: 700;
 }
 
 .close-modal {
@@ -550,7 +624,7 @@ body {
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
-    color: #666;
+    color: #64748b;
     padding: 0;
     width: 30px;
     height: 30px;
@@ -562,7 +636,8 @@ body {
 }
 
 .close-modal:hover {
-    background-color: #f0f0f0;
+    background-color: #e2e8f0;
+    color: #1a365d;
 }
 
 .modal-body {
@@ -573,16 +648,16 @@ body {
 .loading-spinner {
     margin-top: 20px;
     font-size: 2rem;
-    color: #667eea;
+    color: #1a365d;
 }
 
 /* Footer Styles */
 .footer {
     text-align: center;
     margin-top: 40px;
-    color: white;
-    opacity: 0.8;
+    color: #64748b;
     font-size: 0.9rem;
+    font-weight: 500;
 }
 
 /* Responsive Design */
@@ -591,8 +666,13 @@ body {
         padding: 15px;
     }
     
-    .logo {
-        font-size: 2rem;
+    .yn-text {
+        font-size: 3rem;
+    }
+    
+    .young-text,
+    .network-text {
+        font-size: 1rem;
     }
     
     .comparison-container {
@@ -691,18 +771,18 @@ button:focus,
 input:focus,
 select:focus,
 textarea:focus {
-    outline: 2px solid #667eea;
+    outline: 2px solid #1a365d;
     outline-offset: 2px;
 }
 
 /* High contrast mode support */
 @media (prefers-contrast: high) {
     .candidate-card {
-        border: 2px solid #333;
+        border: 2px solid #1a365d;
     }
     
     .vote-btn,
     .submit-btn {
-        border: 2px solid #333;
+        border: 2px solid #1a365d;
     }
 }
