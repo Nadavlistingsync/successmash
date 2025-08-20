@@ -242,7 +242,14 @@
     </div>
 
     <!-- Supabase CDN -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script src="script.js?v=20250820-7"></script>
+    <script type="module">
+      import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+      window.__supabase = createClient(
+        "https://nubqazryyrougsyestiw.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51YnFhenJ5cnJvdWdzeWVzdGl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU1NDczMzksImV4cCI6MjA3MTEyMzMzOX0.gGdt11cb6eRk7qvfbLK0tAYpxz3zZphQLhEYl3KkdIk"
+      );
+      console.log('✅ Supabase ESM loaded successfully');
+    </script>
+    <script src="script.js?v=20250820-8"></script>
 </body>
 </html>
