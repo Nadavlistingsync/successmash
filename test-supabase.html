@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Test</title>
+</head>
+<body>
+    <h1>Supabase Connection Test</h1>
+    <div id="status">Testing...</div>
+    
+    <!-- Load Supabase ESM first -->
+    <script type="module">
+        import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+        window.__supabase = createClient(
+            "https://nubqazryyrougsyestiw.supabase.co",
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51YnFhenJ5cnJvdWdzeWVzdGl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU1NDczMzksImV4cCI6MjA3MTEyMzMzOX0.gGdt11cb6eRk7qvfbLK0tAYpxz3zZphQLhEYl3KkdIk"
+        );
+        console.log("✅ Supabase ESM loaded for test");
+    </script>
+    
+    <script type="module">
+        console.log("Starting Supabase test...");
+        
+        try {
+            console.log("Checking for window.__supabase...");
+            if (!window.__supabase) {
+                throw new Error("window.__supabase not available");
+            }
+            
+            console.log("✅ Supabase client available!");
+            const supabase = window.__supabase;
+            
+            // Test connection
+            console.log("Testing database connection...");
+            const { data: users, error } = await supabase
+                .from("users")
+                .select("*")
+                .limit(5);
+                
+            if (error) {
+                throw error;
+            }
+            
+            console.log("✅ Database connection successful!");
+            console.log("Users found:", users?.length || 0);
+            
+            document.getElementById("status").innerHTML = `
+                <div style="color: green; font-weight: bold;">
+                    ✅ Supabase Connected Successfully!<br>
+                    Users in database: ${users?.length || 0}
+                </div>
+            `;
+            
+        } catch (error) {
+            console.error("❌ Supabase test failed:", error);
+            document.getElementById("status").innerHTML = `
+                <div style="color: red; font-weight: bold;">
+                    ❌ Supabase Connection Failed<br>
+                    Error: ${error.message}
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
