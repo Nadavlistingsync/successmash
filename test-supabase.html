@@ -10,7 +10,8 @@
     <div id="status">Testing...</div>
     
     <!-- Load Supabase ESM first -->
-    <script type="module">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script>
         import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
         window.__supabase = createClient(
             "https://nubqazryyrougsyestiw.supabase.co",
@@ -19,7 +20,8 @@
         console.log("✅ Supabase ESM loaded for test");
     </script>
     
-    <script type="module">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script>
         console.log("Starting Supabase test...");
         
         try {
