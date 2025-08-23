@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete App Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button { margin: 5px; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>YN Young Network - Complete Test</h1>
+    
+    <div class="test-section info">
+        <h3>Test Results</h3>
+        <div id="results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test Controls</h3>
+        <button onclick="testAppLoad()">Test App Load</button>
+        <button onclick="testVoting()">Test Voting</button>
+        <button onclick="testDataPersistence()">Test Data Persistence</button>
+        <button onclick="testErrorLogging()">Test Error Logging</button>
+        <button onclick="clearResults()">Clear Results</button>
+    </div>
+    
+    <script>
+        let testResults = [];
+        
+        function addResult(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            testResults.push({ message, type, timestamp });
+            updateResults();
+        }
+        
+        function updateResults() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = testResults.map(result => 
+                `<div class="${result.type}">[${result.timestamp}] ${result.message}</div>`
+            ).join('');
+        }
+        
+        function clearResults() {
+            testResults = [];
+            updateResults();
+        }
+        
+        function testAppLoad() {
+            addResult('Testing app load...', 'info');
+            
+            // Check if script loads
+            const script = document.createElement('script');
+            script.src = 'script.js';
+            script.onload = () => {
+                addResult('✅ Script loaded successfully', 'success');
+                
+                // Wait for app to initialize
+                setTimeout(() => {
+                    if (window.youngNetwork) {
+                        addResult('✅ App initialized successfully', 'success');
+                        addResult(`Profiles: ${window.youngNetwork.profiles.length}`, 'info');
+                        addResult(`Votes: ${window.youngNetwork.votes.length}`, 'info');
+                        addResult(`Supabase enabled: ${window.youngNetwork.supabaseEnabled}`, 'info');
+                    } else {
+                        addResult('❌ App not initialized', 'error');
+                    }
+                }, 2000);
+            };
+            script.onerror = () => {
+                addResult('❌ Script failed to load', 'error');
+            };
+            document.head.appendChild(script);
+        }
+        
+        function testVoting() {
+            addResult('Testing voting functionality...', 'info');
+            
+            if (window.youngNetwork && window.youngNetwork.currentComparison) {
+                addResult('✅ Current comparison available', 'success');
+                addResult(`Left: ${window.youngNetwork.currentComparison.left?.name}`, 'info');
+                addResult(`Right: ${window.youngNetwork.currentComparison.right?.name}`, 'info');
+                
+                // Test vote
+                try {
+                    window.youngNetwork.handleVote('left');
+                    addResult('✅ Vote processed successfully', 'success');
+                } catch (error) {
+                    addResult(`❌ Vote failed: ${error.message}`, 'error');
+                }
+            } else {
+                addResult('❌ No current comparison available', 'error');
+            }
+        }
+        
+        function testDataPersistence() {
+            addResult('Testing data persistence...', 'info');
+            
+            if (window.youngNetwork) {
+                try {
+                    // Test localStorage
+                    const profiles = localStorage.getItem('ynYoungNetwork_profiles');
+                    const votes = localStorage.getItem('ynYoungNetwork_votes');
+                    
+                    if (profiles) {
+                        addResult('✅ Profiles saved to localStorage', 'success');
+                    } else {
+                        addResult('⚠️ No profiles in localStorage', 'info');
+                    }
+                    
+                    if (votes) {
+                        addResult('✅ Votes saved to localStorage', 'success');
+                    } else {
+                        addResult('⚠️ No votes in localStorage', 'info');
+                    }
+                    
+                    // Test save function
+                    window.youngNetwork.saveData();
+                    addResult('✅ Save function executed', 'success');
+                    
+                } catch (error) {
+                    addResult(`❌ Data persistence test failed: ${error.message}`, 'error');
+                }
+            } else {
+                addResult('❌ App not available for testing', 'error');
+            }
+        }
+        
+        function testErrorLogging() {
+            addResult('Testing error logging...', 'info');
+            
+            if (window.youngNetwork) {
+                try {
+                    // Test error logging
+                    window.youngNetwork.log('Test log message', 'info');
+                    addResult('✅ Log function works', 'success');
+                    
+                    // Test error reporting
+                    window.youngNetwork.reportError(new Error('Test error'), 'Test Context');
+                    addResult('✅ Error reporting works', 'success');
+                    
+                    // Test getting error logs
+                    const logs = window.youngNetwork.getErrorLogs();
+                    addResult(`✅ Error logs retrieved: ${logs.length} entries`, 'success');
+                    
+                } catch (error) {
+                    addResult(`❌ Error logging test failed: ${error.message}`, 'error');
+                }
+            } else {
+                addResult('❌ App not available for testing', 'error');
+            }
+        }
+        
+        // Auto-run basic test on page load
+        window.addEventListener('load', () => {
+            addResult('Page loaded, starting tests...', 'info');
+            setTimeout(testAppLoad, 1000);
+        });
+    </script>
+</body>
+</html>

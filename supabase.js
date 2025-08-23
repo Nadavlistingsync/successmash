@@ -1,8 +1,8 @@
 // Use global Supabase from CDN
 // Hardcoded Supabase configuration to avoid module import issues
 const SUPABASE_CONFIG = {
-    url: "https://nubqazryyrougsyestiw.supabase.co",
-    anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51YnFhenJ5cnJvdWdzeWVzdGl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU1NDczMzksImV4cCI6MjA3MTEyMzMzOX0.gGdt11cb6eRk7qvfbLK0tAYpxz3zZphQLhEYl3KkdIk"
+    url: 'https://nubqazryyrougsyestiw.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51YnFhenJ5cnJvdWdzeWVzdGl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU1NDczMzksImV4cCI6MjA3MTEyMzMzOX0.gGdt11cb6eRk7qvfbLK0tAYpxz3zZphQLhEYl3KkdIk'
 };
 
 // Get Supabase from global scope
@@ -11,53 +11,104 @@ const { createClient } = window.supabase;
 // Create Supabase client
 export const supabase = createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
 
+// Enhanced logging function
+function logDbOperation(operation, data = null, error = null) {
+    const logEntry = {
+        timestamp: new Date().toISOString(),
+        operation,
+        data,
+        error: error ? {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code
+        } : null,
+        config: {
+            url: SUPABASE_CONFIG.url,
+            hasKey: !!SUPABASE_CONFIG.anonKey
+        }
+    };
+    
+    console.log(`[DB] ${operation}:`, logEntry);
+    
+    // Send to Vercel logging
+    fetch('/api/log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            timestamp: new Date().toISOString(),
+            level: error ? 'error' : 'info',
+            message: `Database operation: ${operation}`,
+            data: logEntry
+        })
+    }).catch(e => console.warn('Failed to send DB log:', e));
+}
+
 // Database helper functions
 export const db = {
   async getUsers() {
     try {
+      logDbOperation('getUsers - starting');
       const { data, error } = await supabase
-        .from("users")
-        .select("*")
-        .order("elo", { ascending: false });
+        .from('users')
+        .select('*')
+        .order('elo', { ascending: false })
       
-      if (error) throw error;
-      return data || [];
+      if (error) {
+        logDbOperation('getUsers - error', null, error);
+        throw error;
+      }
+      
+      logDbOperation('getUsers - success', { count: data?.length || 0 });
+      return data || []
     } catch (error) {
-      console.error("getUsers error:", error);
+      logDbOperation('getUsers - exception', null, error);
       throw error;
     }
   },
 
   async createUser(userData) {
     try {
+      logDbOperation('createUser - starting', userData);
       const { data, error } = await supabase
-        .from("users")
+        .from('users')
         .insert([userData])
-        .select();
+        .select()
       
-      if (error) throw error;
-      return data[0];
+      if (error) {
+        logDbOperation('createUser - error', userData, error);
+        throw error;
+      }
+      
+      logDbOperation('createUser - success', data[0]);
+      return data[0]
     } catch (error) {
-      console.error("createUser error:", error);
+      logDbOperation('createUser - exception', userData, error);
       throw error;
     }
   },
 
   async updateUser(userId, updates) {
     try {
+      logDbOperation('updateUser - starting', { userId, updates });
       const { data, error } = await supabase
-        .from("users")
+        .from('users')
         .update({ 
           ...updates,
           updated_at: new Date().toISOString()
         })
-        .eq("id", userId)
-        .select();
+        .eq('id', userId)
+        .select()
       
-      if (error) throw error;
-      return data[0];
+      if (error) {
+        logDbOperation('updateUser - error', { userId, updates }, error);
+        throw error;
+      }
+      
+      logDbOperation('updateUser - success', data[0]);
+      return data[0]
     } catch (error) {
-      console.error("updateUser error:", error);
+      logDbOperation('updateUser - exception', { userId, updates }, error);
       throw error;
     }
   },
@@ -68,79 +119,111 @@ export const db = {
 
   async createVote(voteData) {
     try {
+      logDbOperation('createVote - starting', voteData);
       const { data, error } = await supabase
-        .from("votes")
+        .from('votes')
         .insert([voteData])
-        .select();
+        .select()
       
-      if (error) throw error;
-      return data[0];
+      if (error) {
+        logDbOperation('createVote - error', voteData, error);
+        throw error;
+      }
+      
+      logDbOperation('createVote - success', data[0]);
+      return data[0]
     } catch (error) {
-      console.error("createVote error:", error);
+      logDbOperation('createVote - exception', voteData, error);
       throw error;
     }
   },
 
   async getVotes() {
     try {
+      logDbOperation('getVotes - starting');
       const { data, error } = await supabase
-        .from("votes")
-        .select("*")
-        .order("created_at", { ascending: false });
+        .from('votes')
+        .select('*')
+        .order('created_at', { ascending: false })
       
-      if (error) throw error;
-      return data || [];
+      if (error) {
+        logDbOperation('getVotes - error', null, error);
+        throw error;
+      }
+      
+      logDbOperation('getVotes - success', { count: data?.length || 0 });
+      return data || []
     } catch (error) {
-      console.error("getVotes error:", error);
+      logDbOperation('getVotes - exception', null, error);
       throw error;
     }
   },
 
   async getStatistics() {
     try {
+      logDbOperation('getStatistics - starting');
       const { data, error } = await supabase
-        .from("statistics")
-        .select("*")
-        .eq("id", "global")
-        .single();
+        .from('statistics')
+        .select('*')
+        .eq('id', 'global')
+        .single()
       
-      if (error) throw error;
-      return data;
+      if (error) {
+        logDbOperation('getStatistics - error', null, error);
+        throw error;
+      }
+      
+      logDbOperation('getStatistics - success', data);
+      return data
     } catch (error) {
-      console.error("getStatistics error:", error);
+      logDbOperation('getStatistics - exception', null, error);
       throw error;
     }
   },
 
   async updateStatistics(stats) {
     try {
+      logDbOperation('updateStatistics - starting', stats);
       const { data, error } = await supabase
-        .from("statistics")
+        .from('statistics')
         .upsert([{
-          id: "global",
+          id: 'global',
           ...stats,
           updated_at: new Date().toISOString()
         }])
-        .select();
+        .select()
       
-      if (error) throw error;
-      return data[0];
+      if (error) {
+        logDbOperation('updateStatistics - error', stats, error);
+        throw error;
+      }
+      
+      logDbOperation('updateStatistics - success', data[0]);
+      return data[0]
     } catch (error) {
-      console.error("updateStatistics error:", error);
+      logDbOperation('updateStatistics - exception', stats, error);
       throw error;
     }
   },
 
+  // Test database connection
   async testConnection() {
     try {
+      logDbOperation('testConnection - starting');
       const { data, error } = await supabase
-        .from("users")
-        .select("count")
-        .limit(1);
+        .from('users')
+        .select('count')
+        .limit(1)
       
-      if (error) return { success: false, error };
+      if (error) {
+        logDbOperation('testConnection - error', null, error);
+        return { success: false, error };
+      }
+      
+      logDbOperation('testConnection - success');
       return { success: true, data };
     } catch (error) {
+      logDbOperation('testConnection - exception', null, error);
       return { success: false, error };
     }
   }

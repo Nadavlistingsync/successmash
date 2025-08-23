@@ -1,0 +1,69 @@
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method not allowed' });
+  }
+
+  try {
+    const logEntry = req.body;
+    
+    // Log to Vercel console (this will appear in Vercel logs)
+    console.log(`[${logEntry.timestamp}] [${logEntry.level.toUpperCase()}] ${logEntry.message}`, {
+      sessionId: logEntry.sessionId,
+      userId: logEntry.userId,
+      userAgent: logEntry.userAgent,
+      url: logEntry.url,
+      data: logEntry.data
+    });
+
+    // Log specific interactions for better tracking
+    if (logEntry.message.includes('vote')) {
+      console.log('🎯 VOTE INTERACTION:', {
+        sessionId: logEntry.sessionId,
+        userId: logEntry.userId,
+        action: logEntry.message,
+        data: logEntry.data
+      });
+    }
+
+    if (logEntry.message.includes('real-time')) {
+      console.log('⚡ REAL-TIME INTERACTION:', {
+        sessionId: logEntry.sessionId,
+        userId: logEntry.userId,
+        action: logEntry.message,
+        data: logEntry.data
+      });
+    }
+
+    if (logEntry.message.includes('leaderboard')) {
+      console.log('🏆 LEADERBOARD INTERACTION:', {
+        sessionId: logEntry.sessionId,
+        userId: logEntry.userId,
+        action: logEntry.message,
+        data: logEntry.data
+      });
+    }
+
+    if (logEntry.level === 'error') {
+      console.error('❌ ERROR LOGGED:', {
+        sessionId: logEntry.sessionId,
+        userId: logEntry.userId,
+        error: logEntry.message,
+        data: logEntry.data
+      });
+    }
+
+    // Return success
+    res.status(200).json({ 
+      success: true, 
+      logged: true,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('Logging API error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message 
+    });
+  }
+}

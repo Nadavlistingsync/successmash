@@ -4,7 +4,11 @@
   "description": "An achievement comparison game inspired by Facemash, but focused on comparing how \"cracked\" (successful/achieved) people are based on their university, internships, awards, certifications, and career milestones.",
   "main": "script.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "python3 -m http.server 8000",
+    "serve": "npx serve . -p 3000",
+    "deploy": "git add . && git commit -m \"Auto-deploy\" && git push origin main",
+    "check": "npm list && echo \"✅ All dependencies installed\""
   },
   "keywords": [],
   "author": "",

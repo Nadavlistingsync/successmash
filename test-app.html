@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Test</title>
+</head>
+<body>
+    <h1>Testing YN Young Network App</h1>
+    <p>Check the console for logs...</p>
+    
+    <script>
+        console.log('=== APP TEST STARTING ===');
+        console.log('Loading script.js...');
+        
+        // Test if script loads
+        const script = document.createElement('script');
+        script.src = 'script.js';
+        script.onload = () => {
+            console.log('✅ script.js loaded successfully');
+            console.log('App object:', window.youngNetwork);
+        };
+        script.onerror = (error) => {
+            console.error('❌ Failed to load script.js:', error);
+        };
+        document.head.appendChild(script);
+    </script>
+</body>
+</html>

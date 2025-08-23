@@ -3,24 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>More Cracked or Less Cracked - Test Page</title>
+    <title>YN Young Network - Diagnostic Test</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
             background: #f5f5f5;
         }
-        .test-section {
+        .container {
             background: white;
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        .test-button {
-            background: #667eea;
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .loading { background: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
+        button {
+            background: #007bff;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -28,272 +45,179 @@
             cursor: pointer;
             margin: 5px;
         }
-        .test-button:hover {
-            background: #5a6fd8;
+        button:hover { background: #0056b3; }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
         }
-        .result {
-            background: #f8f9fa;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-            font-family: monospace;
-        }
-        .success { color: #28a745; }
-        .error { color: #dc3545; }
-        .info { color: #17a2b8; }
+        .status-online { background: #28a745; }
+        .status-offline { background: #dc3545; }
+        .status-warning { background: #ffc107; }
     </style>
 </head>
 <body>
-    <h1>More Cracked or Less Cracked - Test Page</h1>
-    
-    <div class="test-section">
-        <h2>Application Status</h2>
-        <button class="test-button" onclick="testAppStatus()">Test App Status</button>
-        <div id="app-status" class="result"></div>
-    </div>
-
-    <div class="test-section">
-        <h2>Data Management</h2>
-        <button class="test-button" onclick="testDataManagement()">Test Data Management</button>
-        <button class="test-button" onclick="clearAllData()">Clear All Data</button>
-        <button class="test-button" onclick="exportTestData()">Export Test Data</button>
-        <div id="data-result" class="result"></div>
-    </div>
-
-    <div class="test-section">
-        <h2>Voting System</h2>
-        <button class="test-button" onclick="testVoting()">Test Voting System</button>
-        <div id="voting-result" class="result"></div>
-    </div>
-
-    <div class="test-section">
-        <h2>Debug Information</h2>
-        <button class="test-button" onclick="showDebugInfo()">Show Debug Info</button>
-        <button class="test-button" onclick="showLogs()">Show Logs</button>
-        <button class="test-button" onclick="showErrors()">Show Errors</button>
-        <div id="debug-result" class="result"></div>
-    </div>
-
-    <div class="test-section">
-        <h2>Performance Test</h2>
-        <button class="test-button" onclick="testPerformance()">Run Performance Test</button>
-        <div id="performance-result" class="result"></div>
-    </div>
-
-    <div class="test-section">
-        <h2>Navigation</h2>
-        <a href="index.html" class="test-button" style="text-decoration: none; display: inline-block;">Open SuccessMash App</a>
+    <div class="container">
+        <h1>🔍 YN Young Network - Diagnostic Test</h1>
+        <p>This page will test your connection and real-time functionality.</p>
+        
+        <div class="test-section">
+            <h2>📊 Test Results</h2>
+            <div id="results"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🎮 Manual Tests</h2>
+            <button onclick="runTest('testDatabaseConnection')">Test Database Connection</button>
+            <button onclick="runTest('diagnoseRealTime')">Diagnose Real-time</button>
+            <button onclick="runTest('forceRefreshAndCheckElo')">Check ELO Scores</button>
+            <button onclick="runTest('forceEnableLiveMode')">Force Enable Live Mode</button>
+            <button onclick="runAllTests()">Run All Tests</button>
+        </div>
+        
+        <div class="test-section">
+            <h2>📝 Console Output</h2>
+            <div id="console-output" class="test-result info"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🔗 Navigation</h2>
+            <a href="index.html" style="text-decoration: none;">
+                <button style="background: #28a745;">Open Main App</button>
+            </a>
+        </div>
     </div>
 
     <script>
-        function logResult(elementId, message, type = 'info') {
-            const element = document.getElementById(elementId);
-            element.innerHTML = `<span class="${type}">[${new Date().toLocaleTimeString()}] ${message}</span>`;
+        // Override console.log to capture output
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        function addToConsole(message, type = 'info') {
+            const consoleOutput = document.getElementById('console-output');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            consoleOutput.textContent += logEntry + '\n';
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
         }
-
-        function testAppStatus() {
-            try {
-                if (window.crackedComparison) {
-                    logResult('app-status', '✅ More Cracked or Less Cracked application is loaded and running', 'success');
-                    
-                    const debugInfo = window.crackedComparison.getDebugInfo();
-                    logResult('app-status', `📊 Profiles: ${debugInfo.profiles}, Votes: ${debugInfo.votes}, Comparisons: ${debugInfo.stats.comparisonsMade}`, 'info');
-                } else {
-                    logResult('app-status', '❌ More Cracked or Less Cracked application not found. Please open index.html first.', 'error');
-                }
-            } catch (error) {
-                logResult('app-status', `❌ Error testing app status: ${error.message}`, 'error');
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToConsole(args.join(' '), 'info');
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToConsole('ERROR: ' + args.join(' '), 'error');
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addToConsole('WARNING: ' + args.join(' '), 'warning');
+        };
+        
+        // Check if app is available
+        function checkAppAvailability() {
+            if (window.youngNetwork) {
+                addToConsole('✅ YN Young Network app found and ready');
+                return true;
+            } else {
+                addToConsole('❌ YN Young Network app not found. Please open the main app first.');
+                return false;
             }
         }
-
-        function testDataManagement() {
-            try {
-                if (!window.crackedComparison) {
-                    logResult('data-result', '❌ More Cracked or Less Cracked not loaded', 'error');
-                    return;
-                }
-
-                // Test localStorage
-                const profiles = localStorage.getItem('crackedComparison_profiles');
-                const votes = localStorage.getItem('crackedComparison_votes');
-                const stats = localStorage.getItem('crackedComparison_stats');
-
-                logResult('data-result', `📁 localStorage check:`, 'info');
-                logResult('data-result', `   Profiles: ${profiles ? '✅ Found' : '❌ Missing'}`, profiles ? 'success' : 'error');
-                logResult('data-result', `   Votes: ${votes ? '✅ Found' : '❌ Missing'}`, votes ? 'success' : 'error');
-                logResult('data-result', `   Stats: ${stats ? '✅ Found' : '❌ Missing'}`, stats ? 'success' : 'error');
-
-                // Test data structure
-                if (profiles) {
-                    const profilesData = JSON.parse(profiles);
-                    logResult('data-result', `   Profile count: ${profilesData.length}`, 'info');
-                }
-
-            } catch (error) {
-                logResult('data-result', `❌ Error testing data management: ${error.message}`, 'error');
+        
+        // Run a specific test
+        async function runTest(testName) {
+            if (!checkAppAvailability()) {
+                displayTestResult(testName, { success: false, error: 'App not available' });
+                return;
             }
-        }
-
-        function clearAllData() {
+            
+            addToConsole(`🧪 Running test: ${testName}`);
+            
             try {
-                localStorage.clear();
-                logResult('data-result', '🗑️ All data cleared from localStorage', 'success');
+                let result;
                 
-                if (window.crackedComparison) {
-                    window.crackedComparison.profiles = [];
-                    window.crackedComparison.votes = [];
-                    window.crackedComparison.stats = { totalVotes: 0, comparisonsMade: 0 };
-                    logResult('data-result', '🔄 Application data reset', 'success');
+                switch (testName) {
+                    case 'testDatabaseConnection':
+                        result = await window.testDatabaseConnection();
+                        break;
+                    case 'diagnoseRealTime':
+                        result = await window.diagnoseRealTime();
+                        break;
+                    case 'forceRefreshAndCheckElo':
+                        result = await window.forceRefreshAndCheckElo();
+                        break;
+                    case 'forceEnableLiveMode':
+                        result = await window.forceEnableLiveMode();
+                        break;
+                    default:
+                        addToConsole('❌ Unknown test: ' + testName, 'error');
+                        return;
                 }
-            } catch (error) {
-                logResult('data-result', `❌ Error clearing data: ${error.message}`, 'error');
-            }
-        }
-
-        function exportTestData() {
-            try {
-                if (window.crackedComparison) {
-                    window.crackedComparison.exportData();
-                    logResult('data-result', '📤 Test data exported successfully', 'success');
-                } else {
-                    logResult('data-result', '❌ More Cracked or Less Cracked not loaded', 'error');
-                }
-            } catch (error) {
-                logResult('data-result', `❌ Error exporting data: ${error.message}`, 'error');
-            }
-        }
-
-        function testVoting() {
-            try {
-                if (!window.crackedComparison) {
-                    logResult('voting-result', '❌ More Cracked or Less Cracked not loaded', 'error');
-                    return;
-                }
-
-                const initialVotes = window.crackedComparison.votes.length;
-                const initialStats = { ...window.crackedComparison.stats };
-
-                // Simulate a vote
-                if (window.crackedComparison.currentComparison) {
-                    const winner = window.crackedComparison.currentComparison.left;
-                    const loser = window.crackedComparison.currentComparison.right;
-                    
-                    logResult('voting-result', `🎯 Testing vote: ${winner.name} vs ${loser.name}`, 'info');
-                    
-                    // Simulate vote
-                    winner.wins++;
-                    winner.totalVotes++;
-                    loser.totalVotes++;
-                    window.crackedComparison.stats.totalVotes++;
-                    window.crackedComparison.stats.comparisonsMade++;
-                    
-                    logResult('voting-result', `✅ Vote simulated successfully`, 'success');
-                    logResult('voting-result', `   Votes increased: ${initialVotes} → ${window.crackedComparison.votes.length + 1}`, 'info');
-                    logResult('voting-result', `   Total votes: ${initialStats.totalVotes} → ${window.crackedComparison.stats.totalVotes}`, 'info');
-                } else {
-                    logResult('voting-result', '⚠️ No current comparison available', 'error');
-                }
-
-            } catch (error) {
-                logResult('voting-result', `❌ Error testing voting: ${error.message}`, 'error');
-            }
-        }
-
-        function showDebugInfo() {
-            try {
-                if (window.crackedComparison) {
-                    const debugInfo = window.crackedComparison.getDebugInfo();
-                    logResult('debug-result', '🔍 Debug Information:', 'info');
-                    logResult('debug-result', JSON.stringify(debugInfo, null, 2), 'info');
-                } else {
-                    logResult('debug-result', '❌ More Cracked or Less Cracked not loaded', 'error');
-                }
-            } catch (error) {
-                logResult('debug-result', `❌ Error showing debug info: ${error.message}`, 'error');
-            }
-        }
-
-        function showLogs() {
-            try {
-                const logs = JSON.parse(localStorage.getItem('crackedComparison_logs') || '[]');
-                logResult('debug-result', `📝 Logs (${logs.length} entries):`, 'info');
                 
-                if (logs.length > 0) {
-                    const recentLogs = logs.slice(-5); // Show last 5 logs
-                    recentLogs.forEach(log => {
-                        logResult('debug-result', `   [${log.level.toUpperCase()}] ${log.message}`, log.level);
-                    });
-                } else {
-                    logResult('debug-result', '   No logs found', 'info');
-                }
+                displayTestResult(testName, result);
+                
             } catch (error) {
-                logResult('debug-result', `❌ Error showing logs: ${error.message}`, 'error');
+                addToConsole(`❌ Test ${testName} failed: ${error.message}`, 'error');
+                displayTestResult(testName, { success: false, error: error.message });
             }
         }
-
-        function showErrors() {
-            try {
-                const errors = JSON.parse(localStorage.getItem('crackedComparison_errors') || '[]');
-                logResult('debug-result', `🚨 Errors (${errors.length} entries):`, 'info');
-                
-                if (errors.length > 0) {
-                    const recentErrors = errors.slice(-3); // Show last 3 errors
-                    recentErrors.forEach(error => {
-                        logResult('debug-result', `   [${error.level.toUpperCase()}] ${error.message}`, 'error');
-                    });
-                } else {
-                    logResult('debug-result', '   No errors found', 'success');
-                }
-            } catch (error) {
-                logResult('debug-result', `❌ Error showing errors: ${error.message}`, 'error');
+        
+        // Run all tests
+        async function runAllTests() {
+            addToConsole('🔄 Running all diagnostic tests...');
+            
+            if (!checkAppAvailability()) {
+                addToConsole('❌ Cannot run tests - app not available');
+                return;
             }
-        }
-
-        function testPerformance() {
-            try {
-                const startTime = performance.now();
-                
-                // Test data operations
-                const testProfiles = Array.from({ length: 100 }, (_, i) => ({
-                    id: i,
-                    name: `Test User ${i}`,
-                    title: "Test Title",
-                    company: "Test Company",
-                    experience: Math.floor(Math.random() * 20),
-                    achievements: ["Test Achievement"],
-                    wins: 0,
-                    totalVotes: 0,
-                    successScore: 0
-                }));
-
-                // Test sorting
-                const sortedProfiles = [...testProfiles].sort((a, b) => b.successScore - a.successScore);
-                
-                const endTime = performance.now();
-                const duration = endTime - startTime;
-
-                logResult('performance-result', `⚡ Performance test completed in ${duration.toFixed(2)}ms`, 'success');
-                logResult('performance-result', `   Tested ${testProfiles.length} profiles`, 'info');
-                logResult('performance-result', `   Sorting operation: ${duration.toFixed(2)}ms`, 'info');
-
-                if (duration < 10) {
-                    logResult('performance-result', '✅ Performance is excellent', 'success');
-                } else if (duration < 50) {
-                    logResult('performance-result', '⚠️ Performance is acceptable', 'info');
-                } else {
-                    logResult('performance-result', '❌ Performance needs improvement', 'error');
-                }
-
-            } catch (error) {
-                logResult('performance-result', `❌ Error testing performance: ${error.message}`, 'error');
+            
+            const tests = [
+                'testDatabaseConnection',
+                'diagnoseRealTime',
+                'forceRefreshAndCheckElo',
+                'forceEnableLiveMode'
+            ];
+            
+            for (const test of tests) {
+                await runTest(test);
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Wait between tests
             }
+            
+            addToConsole('✅ All tests completed');
         }
-
-        // Auto-run basic tests when page loads
+        
+        // Display test result
+        function displayTestResult(testName, result) {
+            const resultsDiv = document.getElementById('results');
+            
+            const statusClass = result.success ? 'success' : 'error';
+            const statusIcon = result.success ? '✅' : '❌';
+            
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${statusClass}`;
+            resultDiv.innerHTML = `
+                <strong>${statusIcon} ${testName}</strong><br>
+                <pre>${JSON.stringify(result, null, 2)}</pre>
+            `;
+            
+            resultsDiv.appendChild(resultDiv);
+        }
+        
+        // Make functions global
+        window.runTest = runTest;
+        window.runAllTests = runAllTests;
+        
+        // Check app availability on load
         window.addEventListener('load', () => {
+            addToConsole('🔍 Checking for YN Young Network app...');
             setTimeout(() => {
-                testAppStatus();
-                testDataManagement();
+                checkAppAvailability();
             }, 1000);
         });
     </script>

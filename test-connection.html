@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Connection Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        .info { color: blue; }
+        input, button { margin: 10px 0; padding: 8px; }
+        .credentials { background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Supabase Connection Test</h1>
+    
+    <div class="credentials">
+        <h3>Enter Your Supabase Credentials:</h3>
+        <div>
+            <label>Project URL:</label><br>
+            <input type="text" id="projectUrl" placeholder="https://xxxxxxxxxxxxx.supabase.co" style="width: 400px;">
+        </div>
+        <div>
+            <label>Anon Key:</label><br>
+            <input type="text" id="anonKey" placeholder="eyJ..." style="width: 400px;">
+        </div>
+        <button onclick="testConnection()">🧪 Test Connection</button>
+    </div>
+    
+    <div id="status">Enter your credentials above and click "Test Connection"</div>
+    
+    <!-- Load Supabase via CDN -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script>
+        function testConnection() {
+            const projectUrl = document.getElementById('projectUrl').value.trim();
+            const anonKey = document.getElementById('anonKey').value.trim();
+            const statusDiv = document.getElementById('status');
+            
+            if (!projectUrl || !anonKey) {
+                statusDiv.innerHTML = '<div class="error">❌ Please enter both Project URL and Anon Key</div>';
+                return;
+            }
+            
+            statusDiv.innerHTML = '<div class="info">🔄 Testing connection...</div>';
+            
+            try {
+                // Create Supabase client
+                const supabase = window.supabase.createClient(projectUrl, anonKey);
+                console.log('✅ Supabase client created');
+                
+                // Test connection by querying users table
+                supabase
+                    .from('users')
+                    .select('*')
+                    .limit(1)
+                    .then(({ data, error }) => {
+                        if (error) {
+                            console.error('❌ Database error:', error);
+                            statusDiv.innerHTML = `
+                                <div class="error">
+                                    ❌ Database Connection Failed<br>
+                                    Error: ${error.message}<br>
+                                    <small>This might mean the database schema isn't set up yet.</small>
+                                </div>
+                            `;
+                        } else {
+                            console.log('✅ Database connection successful!');
+                            statusDiv.innerHTML = `
+                                <div class="success">
+                                    ✅ Supabase Connected Successfully!<br>
+                                    Users in database: ${data?.length || 0}<br>
+                                    <small>Your credentials are working! You can now update the main app.</small>
+                                </div>
+                            `;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('❌ Connection failed:', error);
+                        statusDiv.innerHTML = `
+                            <div class="error">
+                                ❌ Connection Failed<br>
+                                Error: ${error.message}<br>
+                                <small>Check your Project URL and Anon Key.</small>
+                            </div>
+                        `;
+                    });
+                        
+            } catch (error) {
+                console.error('❌ Client creation failed:', error);
+                statusDiv.innerHTML = `
+                    <div class="error">
+                        ❌ Client Creation Failed<br>
+                        Error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // Auto-fill with current credentials (if any)
+        document.getElementById('projectUrl').value = 'https://nubqazryyrougsyestiw.supabase.co';
+        document.getElementById('anonKey').value = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51YnFhenJ5cnJvdWdzeWVzdGl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU1NDczMzksImV4cCI6MjA3MTEyMzMzOX0.gGdt11cb6eRk7qvfbLK0tAYpxz3zZphQLhEYl3KkdIk';
+    </script>
+</body>
+</html>

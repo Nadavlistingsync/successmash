@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YN Young Network - Debug</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: #f8fafc;
+        }
+        .status { 
+            padding: 15px; 
+            margin: 10px 0; 
+            border-radius: 8px; 
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button { 
+            padding: 12px 20px; 
+            margin: 5px; 
+            cursor: pointer; 
+            border: none; 
+            border-radius: 5px; 
+            background: #007bff; 
+            color: white; 
+            font-weight: bold;
+        }
+        button:hover { background: #0056b3; }
+        .log { 
+            background: #f8f9fa; 
+            padding: 15px; 
+            border-radius: 5px; 
+            font-family: monospace; 
+            font-size: 12px; 
+            max-height: 300px; 
+            overflow-y: auto; 
+            border: 1px solid #e2e8f0;
+        }
+        h1 { color: #1a365d; text-align: center; }
+        .debug-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>🔍 YN Young Network - Debug Console</h1>
+        
+        <div id="results"></div>
+        
+        <div style="margin: 20px 0; text-align: center;">
+            <button onclick="testConnection()">🔌 Test Supabase Connection</button>
+            <button onclick="testRealTime()">⚡ Test Real-Time Features</button>
+            <button onclick="testDatabase()">🗄️ Test Database Tables</button>
+            <button onclick="clearLog()">🧹 Clear Log</button>
+        </div>
+        
+        <div class="log" id="log">Loading debug console...</div>
+    </div>
+    
+    <script>
+        // Simple debug functions without external dependencies
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log')
+            const timestamp = new Date().toLocaleTimeString()
+            logDiv.innerHTML += `<div>[${timestamp}] ${message}</div>`
+            logDiv.scrollTop = logDiv.scrollHeight
+        }
+        
+        function showStatus(message, type = 'info') {
+            const results = document.getElementById('results')
+            const div = document.createElement('div')
+            div.className = `status ${type}`
+            div.textContent = message
+            results.appendChild(div)
+        }
+        
+        window.testConnection = async function() {
+            showStatus('Testing Supabase connection...', 'warning')
+            log('🔌 Testing basic Supabase connection...')
+            
+            try {
+                // Test if we can access the main app's Supabase instance
+                if (typeof window.youngNetwork !== 'undefined' && window.youngNetwork.supabase) {
+                    const { data, error } = await window.youngNetwork.supabase.from('users').select('count').limit(1)
+                    
+                    if (error) {
+                        showStatus(`❌ Connection failed: ${error.message}`, 'error')
+                        log(`❌ Error: ${error.message}`)
+                        
+                        if (error.message.includes('relation "users" does not exist')) {
+                            showStatus('🔧 Solution: Run database-schema.sql in Supabase SQL Editor', 'warning')
+                            log('🔧 Database schema not set up. Run database-schema.sql in Supabase SQL Editor.')
+                        }
+                    } else {
+                        showStatus('✅ Basic connection successful', 'success')
+                        log('✅ Basic Supabase connection working')
+                    }
+                } else {
+                    showStatus('❌ Main app not loaded - go to main page first', 'error')
+                    log('❌ Main app not loaded. Please go to the main page first to initialize Supabase.')
+                }
+            } catch (err) {
+                showStatus(`❌ Connection error: ${err.message}`, 'error')
+                log(`❌ Exception: ${err.message}`)
+            }
+        }
+        
+        window.testRealTime = async function() {
+            showStatus('Testing real-time features...', 'warning')
+            log('⚡ Testing real-time subscription...')
+            
+            try {
+                if (typeof window.youngNetwork !== 'undefined' && window.youngNetwork.supabase) {
+                    const channel = window.youngNetwork.supabase
+                        .channel('debug_realtime')
+                        .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, (payload) => {
+                            log('✅ Real-time event received!')
+                            showStatus('✅ Real-time subscription working!', 'success')
+                        })
+                        .subscribe((status) => {
+                            log(`📡 Real-time status: ${status}`)
+                            
+                            if (status === 'SUBSCRIBED') {
+                                showStatus('✅ Real-time subscription successful', 'success')
+                                log('✅ Real-time subscription active')
+                            } else if (status === 'CHANNEL_ERROR') {
+                                showStatus('❌ Real-time subscription failed', 'error')
+                                log('❌ Real-time subscription failed - check if real-time is enabled in Supabase dashboard')
+                            } else if (status === 'TIMED_OUT') {
+                                showStatus('⏰ Real-time connection timed out', 'error')
+                                log('⏰ Real-time connection timed out')
+                            }
+                        })
+                    
+                    setTimeout(() => {
+                        channel.unsubscribe()
+                        log('🔌 Real-time test completed')
+                    }, 5000)
+                } else {
+                    showStatus('❌ Main app not loaded - go to main page first', 'error')
+                    log('❌ Main app not loaded. Please go to the main page first to initialize Supabase.')
+                }
+                
+            } catch (err) {
+                showStatus(`❌ Real-time test error: ${err.message}`, 'error')
+                log(`❌ Real-time error: ${err.message}`)
+            }
+        }
+        
+        window.testDatabase = async function() {
+            showStatus('Testing database tables...', 'warning')
+            log('🗄️ Testing database table access...')
+            
+            if (typeof window.youngNetwork === 'undefined' || !window.youngNetwork.supabase) {
+                showStatus('❌ Main app not loaded - go to main page first', 'error')
+                log('❌ Main app not loaded. Please go to the main page first to initialize Supabase.')
+                return;
+            }
+            
+            const tables = ['users', 'votes', 'statistics']
+            
+            for (const table of tables) {
+                try {
+                    const { data, error } = await window.youngNetwork.supabase.from(table).select('count').limit(1)
+                    
+                    if (error) {
+                        showStatus(`❌ ${table} table error: ${error.message}`, 'error')
+                        log(`❌ ${table} table: ${error.message}`)
+                    } else {
+                        showStatus(`✅ ${table} table accessible`, 'success')
+                        log(`✅ ${table} table: accessible`)
+                    }
+                } catch (err) {
+                    showStatus(`❌ ${table} table exception: ${err.message}`, 'error')
+                    log(`❌ ${table} table exception: ${err.message}`)
+                }
+            }
+        }
+        
+        window.clearLog = function() {
+            document.getElementById('log').innerHTML = 'Log cleared...'
+            document.getElementById('results').innerHTML = ''
+        }
+        
+        // Check if main app is available
+        function checkMainApp() {
+            if (typeof window.youngNetwork !== 'undefined') {
+                log('✅ Main app detected - Supabase should be available')
+                showStatus('✅ Main app loaded - ready to test', 'success')
+            } else {
+                log('⚠️ Main app not detected - please go to main page first')
+                showStatus('⚠️ Please go to main page first to initialize Supabase', 'warning')
+            }
+        }
+        
+        // Auto-check main app
+        setTimeout(checkMainApp, 1000)
+    </script>
+</body>
+</html>

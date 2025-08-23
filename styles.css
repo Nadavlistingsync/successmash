@@ -443,67 +443,71 @@ body {
     overflow-y: auto;
 }
 
+/* Leaderboard styles */
 .leaderboard-item {
-    display: grid;
-    grid-template-columns: 80px 2fr 1fr 1fr 1fr;
-    gap: 20px;
-    padding: 15px 20px;
-    border-bottom: 1px solid #e2e8f0;
-    transition: background-color 0.3s ease;
-    font-weight: 500;
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    margin: 10px 0;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
 }
 
 .leaderboard-item:hover {
-    background: #f8fafc;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-.leaderboard-item:nth-child(1) {
-    background: linear-gradient(135deg, #fbbf24, #f59e0b);
-    color: #92400e;
-    font-weight: 700;
+.leaderboard-item .rank {
+    font-size: 24px;
+    font-weight: bold;
+    color: #667eea;
+    margin-right: 20px;
+    min-width: 40px;
 }
 
-.leaderboard-item:nth-child(2) {
-    background: linear-gradient(135deg, #e5e7eb, #d1d5db);
-    color: #374151;
-    font-weight: 700;
+.leaderboard-item .profile-info {
+    flex: 1;
 }
 
-.leaderboard-item:nth-child(3) {
-    background: linear-gradient(135deg, #fcd34d, #f59e0b);
-    color: #92400e;
-    font-weight: 700;
+.leaderboard-item .name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 5px;
 }
 
-.rank {
-    font-weight: 800;
-    font-size: 1.2rem;
+.leaderboard-item .title {
+    font-size: 14px;
+    color: #718096;
 }
 
-.leaderboard-item:nth-child(1) .rank::after {
-    content: '🥇';
-    margin-left: 5px;
+.leaderboard-item .stats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
 }
 
-.leaderboard-item:nth-child(2) .rank::after {
-    content: '🥈';
-    margin-left: 5px;
+.leaderboard-item .elo {
+    font-size: 16px;
+    font-weight: 600;
+    color: #f6ad55;
 }
 
-.leaderboard-item:nth-child(3) .rank::after {
-    content: '🥉';
-    margin-left: 5px;
+.leaderboard-item .wins,
+.leaderboard-item .votes {
+    font-size: 12px;
+    color: #718096;
 }
 
 /* Add Profile Form Styles */
 .add-profile-form {
-    background: white;
-    padding: 40px;
-    border-radius: 20px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
     max-width: 600px;
     margin: 0 auto;
-    border: 1px solid #e2e8f0;
+    padding: 20px;
 }
 
 .add-profile-form h2 {
@@ -519,89 +523,74 @@ body {
 
 .form-group label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
     font-weight: 600;
-    color: #1a365d;
+    color: #2d3748;
 }
 
 .form-group input,
-.form-group select,
 .form-group textarea {
     width: 100%;
-    padding: 12px 16px;
+    padding: 12px;
     border: 2px solid #e2e8f0;
-    border-radius: 10px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    background: #f8fafc;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
 }
 
 .form-group input:focus,
-.form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #1a365d;
-    background: white;
-    box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.1);
+    border-color: #667eea;
 }
 
 .submit-btn {
-    width: 100%;
-    background: linear-gradient(135deg, #1a365d, #2d5a87);
+    background: #667eea;
     color: white;
     border: none;
-    padding: 15px;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 700;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 20px;
+    transition: background 0.3s ease;
 }
 
 .submit-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(26, 54, 93, 0.3);
+    background: #5a67d8;
 }
 
 /* Modal Styles */
 .modal {
     display: none;
     position: fixed;
-    z-index: 1000;
-    left: 0;
     top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(5px);
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
 }
 
 .modal-content {
-    background-color: white;
-    margin: 15% auto;
-    padding: 0;
-    border-radius: 20px;
-    width: 90%;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
     max-width: 400px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-    animation: modalSlideIn 0.3s ease-out;
-    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
-@keyframes modalSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-50px) scale(0.9);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+.modal-content h3 {
+    color: #2d3748;
+    margin-bottom: 10px;
+}
+
+.modal-content p {
+    color: #718096;
+    margin-bottom: 20px;
 }
 
 .modal-header {
@@ -785,4 +774,90 @@ textarea:focus {
     .submit-btn {
         border: 2px solid #1a365d;
     }
+}
+
+/* Real-time status indicator */
+#real-time-status {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.status-online { 
+    background: #10b981; 
+    color: white; 
+}
+
+.status-offline { 
+    background: #ef4444; 
+    color: white; 
+}
+
+.status-warning { 
+    background: #f59e0b; 
+    color: white; 
+}
+
+.status-error { 
+    background: #ef4444; 
+    color: white; 
+}
+
+/* Notification animations */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Stats bar styles */
+.stats-bar {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    margin: 20px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-label {
+    display: block;
+    font-size: 14px;
+    color: #718096;
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    display: block;
+    font-size: 24px;
+    font-weight: bold;
+    color: #667eea;
 }

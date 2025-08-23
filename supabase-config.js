@@ -3,10 +3,10 @@
 
 export const SUPABASE_CONFIG = {
     // Your Supabase project URL (found in your project settings)
-    url: 'YOUR_SUPABASE_PROJECT_URL',
+    url: 'https://nubqazryyrougsyestiw.supabase.co',
     
     // Your Supabase anon key (found in your project settings)
-    anonKey: 'YOUR_SUPABASE_ANON_KEY'
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51YnFhenJ5cnJvdWdzeWVzdGl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU1NDczMzksImV4cCI6MjA3MTEyMzMzOX0.gGdt11cb6eRk7qvfbLK0tAYpxz3zZphQLhEYl3KkdIk'
 };
 
 // Instructions:

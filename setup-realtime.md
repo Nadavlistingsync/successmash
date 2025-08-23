@@ -25,7 +25,7 @@ Follow these steps to enable real-time updates:
 2. **Look for status indicator** in top-right corner:
    - 🟢 **Green** = "Live Updates Active" (working!)
    - 🔴 **Red** = "Offline Mode" (needs setup)
-3. **Open browser console** (F12) and run: `diagnoseRealTime()`
+3. **Open browser console** (F12) and run: `testRealTime()`
 
 ## 🎯 What This Enables
 
@@ -53,7 +53,7 @@ Once setup is complete:
 ### Check Console for Errors:
 1. **Open browser console** (F12)
 2. **Look for red error messages**
-3. **Run**: `diagnoseRealTime()`
+3. **Run**: `getConnectionStatus()`
 4. **Share any errors** so we can fix them
 
 ### Common Issues:
