@@ -861,3 +861,221 @@ textarea:focus {
     font-weight: bold;
     color: #667eea;
 }
+
+/* Industry Filter */
+.industry-filter {
+    background: white;
+    padding: 15px 20px;
+    margin: 20px 0;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.industry-filter label {
+    font-weight: 600;
+    color: #4a5568;
+    margin: 0;
+}
+
+.industry-filter select {
+    padding: 8px 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    background: white;
+    font-size: 14px;
+    color: #4a5568;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.industry-filter select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+/* Analytics View */
+.analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.analytics-card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.analytics-card h3 {
+    margin: 0 0 15px 0;
+    color: #4a5568;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.chart-container {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f7fafc;
+    border-radius: 8px;
+    color: #718096;
+    font-size: 14px;
+}
+
+.achievements-container {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.achievement-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin: 5px 0;
+    background: #f7fafc;
+    border-radius: 6px;
+    border-left: 4px solid #667eea;
+}
+
+.achievement-text {
+    font-size: 14px;
+    color: #4a5568;
+}
+
+.achievement-count {
+    background: #667eea;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Social Sharing */
+.social-sharing {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.share-btn, .export-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.share-btn {
+    background: #667eea;
+    color: white;
+}
+
+.share-btn:hover {
+    background: #5a67d8;
+    transform: translateY(-1px);
+}
+
+.export-btn {
+    background: #48bb78;
+    color: white;
+}
+
+.export-btn:hover {
+    background: #38a169;
+    transform: translateY(-1px);
+}
+
+.share-icon, .export-icon {
+    font-size: 16px;
+}
+
+.social-sharing-modal {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e2e8f0;
+}
+
+/* Achievement Categories */
+.achievement-category {
+    display: inline-block;
+    padding: 4px 8px;
+    margin: 2px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.category-tech {
+    background: #bee3f8;
+    color: #2b6cb0;
+}
+
+.category-business {
+    background: #c6f6d5;
+    color: #2f855a;
+}
+
+.category-finance {
+    background: #fed7d7;
+    color: #c53030;
+}
+
+.category-creative {
+    background: #fbb6ce;
+    color: #b83280;
+}
+
+.category-education {
+    background: #e9d8fd;
+    color: #553c9a;
+}
+
+.category-healthcare {
+    background: #feebc8;
+    color: #c05621;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    padding: 20px;
+    color: #718096;
+    font-size: 14px;
+    margin-top: 40px;
+}
+
+/* Responsive Design for Analytics */
+@media (max-width: 768px) {
+    .analytics-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .industry-filter {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .social-sharing {
+        flex-direction: column;
+    }
+    
+    .share-btn, .export-btn {
+        justify-content: center;
+    }
+}

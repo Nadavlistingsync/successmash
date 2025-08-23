@@ -145,6 +145,7 @@ class YoungNetwork {
         
         this.setupEventListeners();
         this.setupActivityTracking();
+        this.setupAnalytics();
         this.ensureAppFunctionality();
         
         this.log('🎯 Application initialization complete', 'info', {
@@ -1409,6 +1410,15 @@ class YoungNetwork {
                 });
             }
 
+            // Industry filter
+            const industrySelect = document.getElementById('industry-select');
+            if (industrySelect) {
+                industrySelect.addEventListener('change', (e) => {
+                    const selectedIndustry = e.target.value;
+                    this.filterByIndustry(selectedIndustry);
+                });
+            }
+
             this.log('Event listeners setup complete', 'success');
         } catch (error) {
             this.reportError(error, 'setupEventListeners');
@@ -1443,6 +1453,11 @@ class YoungNetwork {
             // Special handling for leaderboard view
             if (viewName === 'leaderboard') {
                 this.updateLeaderboard();
+            }
+
+            // Special handling for analytics view
+            if (viewName === 'analytics') {
+                this.updateAnalytics();
             }
 
             this.log(`Switched to ${viewName} view`, 'info');
@@ -2585,19 +2600,266 @@ class YoungNetwork {
             this.showNotification('❌ Failed to add profile', 'error');
         }
     }
+
+    // Industry Filtering
+    setupIndustryFilter() {
+        const industrySelect = document.getElementById('industry-select');
+        if (industrySelect) {
+            industrySelect.addEventListener('change', (e) => {
+                const selectedIndustry = e.target.value;
+                this.filterByIndustry(selectedIndustry);
+            });
+        }
+    }
+
+    filterByIndustry(industry) {
+        this.log('🔍 Filtering by industry: ' + (industry || 'All'), 'info');
+        
+        if (!industry) {
+            // Show all profiles
+            this.updateComparisonDisplay();
+            this.updateLeaderboard();
+            return;
+        }
+        
+        // Filter profiles by industry
+        const filteredProfiles = this.profiles.filter(profile => 
+            profile.industry && profile.industry.toLowerCase() === industry.toLowerCase()
+        );
+        
+        if (filteredProfiles.length < 2) {
+            this.showNotification('⚠️ Not enough profiles in this industry for comparison', 'warning');
+            return;
+        }
+        
+        // Update current comparison with filtered profiles
+        this.currentComparison = this.getRandomComparison(filteredProfiles);
+        this.updateComparisonDisplay();
+        this.updateLeaderboard(filteredProfiles);
+    }
+
+    // Analytics Dashboard
+    setupAnalytics() {
+        this.updateAnalytics();
+    }
+
+    updateAnalytics() {
+        this.updateIndustryChart();
+        this.updateVotingTrends();
+        this.updateAchievementsList();
+    }
+
+    updateIndustryChart() {
+        const chartContainer = document.getElementById('industry-chart');
+        if (!chartContainer) return;
+        
+        const industryStats = {};
+        this.profiles.forEach(profile => {
+            const industry = profile.industry || 'Unknown';
+            industryStats[industry] = (industryStats[industry] || 0) + 1;
+        });
+        
+        const chartHTML = Object.entries(industryStats)
+            .map(([industry, count]) => `
+                <div class="achievement-item">
+                    <span class="achievement-text">${industry}</span>
+                    <span class="achievement-count">${count}</span>
+                </div>
+            `).join('');
+        
+        chartContainer.innerHTML = chartHTML || '<p>No industry data available</p>';
+    }
+
+    updateVotingTrends() {
+        const trendsContainer = document.getElementById('voting-trends');
+        if (!trendsContainer) return;
+        
+        const recentVotes = this.votes.slice(-10); // Last 10 votes
+        const trendsHTML = recentVotes.length > 0 ? 
+            `<p>Recent activity: ${recentVotes.length} votes in last session</p>
+             <p>Total votes: ${this.stats.totalVotes}</p>
+             <p>Comparisons made: ${this.stats.comparisonsMade}</p>` :
+            '<p>No voting data available yet</p>';
+        
+        trendsContainer.innerHTML = trendsHTML;
+    }
+
+    updateAchievementsList() {
+        const achievementsContainer = document.getElementById('achievements-list');
+        if (!achievementsContainer) return;
+        
+        const achievementStats = {};
+        this.profiles.forEach(profile => {
+            if (profile.achievements) {
+                profile.achievements.forEach(achievement => {
+                    achievementStats[achievement] = (achievementStats[achievement] || 0) + 1;
+                });
+            }
+        });
+        
+        const sortedAchievements = Object.entries(achievementStats)
+            .sort(([,a], [,b]) => b - a)
+            .slice(0, 10); // Top 10 achievements
+        
+        const achievementsHTML = sortedAchievements.length > 0 ?
+            sortedAchievements.map(([achievement, count]) => `
+                <div class="achievement-item">
+                    <span class="achievement-text">${achievement}</span>
+                    <span class="achievement-count">${count}</span>
+                </div>
+            `).join('') :
+            '<p>No achievements data available</p>';
+        
+        achievementsContainer.innerHTML = achievementsHTML;
+    }
+
+    // Social Sharing
+    shareResults() {
+        const shareData = {
+            title: 'YN Young Network - Professional Achievement Comparison',
+            text: `I've compared ${this.stats.totalVotes} professionals on YN Young Network! Check out the leaderboard and see who's more "cracked".`,
+            url: window.location.href
+        };
+        
+        if (navigator.share) {
+            navigator.share(shareData).then(() => {
+                this.log('📤 Results shared successfully', 'success');
+            }).catch(err => {
+                this.log('❌ Share failed: ' + err.message, 'error');
+                this.fallbackShare(shareData);
+            });
+        } else {
+            this.fallbackShare(shareData);
+        }
+    }
+
+    shareVoteResult() {
+        if (!this.currentComparison) return;
+        
+        const winner = this.currentComparison.left.elo > this.currentComparison.right.elo ? 
+            this.currentComparison.left : this.currentComparison.right;
+        
+        const shareData = {
+            title: 'YN Young Network Vote Result',
+            text: `I voted for ${winner.name} as more "cracked"! ${winner.title} at ${winner.company} has an ELO of ${winner.elo}.`,
+            url: window.location.href
+        };
+        
+        if (navigator.share) {
+            navigator.share(shareData).then(() => {
+                this.log('📤 Vote result shared successfully', 'success');
+            }).catch(err => {
+                this.log('❌ Share failed: ' + err.message, 'error');
+                this.fallbackShare(shareData);
+            });
+        } else {
+            this.fallbackShare(shareData);
+        }
+    }
+
+    fallbackShare(shareData) {
+        const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareData.text)}&url=${encodeURIComponent(shareData.url)}`;
+        window.open(shareUrl, '_blank');
+        this.log('📤 Shared via Twitter fallback', 'info');
+    }
+
+    exportAnalytics() {
+        const analyticsData = {
+            timestamp: new Date().toISOString(),
+            profiles: this.profiles,
+            votes: this.votes,
+            stats: this.stats,
+            industryStats: this.getIndustryStats(),
+            achievementStats: this.getAchievementStats()
+        };
+        
+        const dataStr = JSON.stringify(analyticsData, null, 2);
+        const dataBlob = new Blob([dataStr], {type: 'application/json'});
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `yn-analytics-${new Date().toISOString().split('T')[0]}.json`;
+        link.click();
+        URL.revokeObjectURL(url);
+        
+        this.log('📊 Analytics data exported', 'success');
+    }
+
+    getIndustryStats() {
+        const stats = {};
+        this.profiles.forEach(profile => {
+            const industry = profile.industry || 'Unknown';
+            stats[industry] = (stats[industry] || 0) + 1;
+        });
+        return stats;
+    }
+
+    getAchievementStats() {
+        const stats = {};
+        this.profiles.forEach(profile => {
+            if (profile.achievements) {
+                profile.achievements.forEach(achievement => {
+                    stats[achievement] = (stats[achievement] || 0) + 1;
+                });
+            }
+        });
+        return stats;
+    }
+
+    // Achievement Categorization
+    categorizeAchievement(achievement) {
+        const achievementLower = achievement.toLowerCase();
+        
+        if (achievementLower.includes('internship') || achievementLower.includes('software') || 
+            achievementLower.includes('engineer') || achievementLower.includes('developer') ||
+            achievementLower.includes('tech') || achievementLower.includes('programming')) {
+            return 'tech';
+        }
+        
+        if (achievementLower.includes('mba') || achievementLower.includes('business') ||
+            achievementLower.includes('product') || achievementLower.includes('management') ||
+            achievementLower.includes('strategy')) {
+            return 'business';
+        }
+        
+        if (achievementLower.includes('finance') || achievementLower.includes('banking') ||
+            achievementLower.includes('investment') || achievementLower.includes('cfa') ||
+            achievementLower.includes('m&a') || achievementLower.includes('deal')) {
+            return 'finance';
+        }
+        
+        if (achievementLower.includes('design') || achievementLower.includes('creative') ||
+            achievementLower.includes('art') || achievementLower.includes('cannes') ||
+            achievementLower.includes('award') || achievementLower.includes('creative')) {
+            return 'creative';
+        }
+        
+        if (achievementLower.includes('phd') || achievementLower.includes('research') ||
+            achievementLower.includes('paper') || achievementLower.includes('academic') ||
+            achievementLower.includes('university') || achievementLower.includes('education')) {
+            return 'education';
+        }
+        
+        if (achievementLower.includes('health') || achievementLower.includes('medical') ||
+            achievementLower.includes('doctor') || achievementLower.includes('nurse') ||
+            achievementLower.includes('hospital')) {
+            return 'healthcare';
+        }
+        
+        return 'other';
+    }
+
+    renderAchievementWithCategory(achievement) {
+        const category = this.categorizeAchievement(achievement);
+        return `<span class="achievement-category category-${category}">${category}</span> ${achievement}`;
+    }
+
+
 }
 
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.youngNetwork = new YoungNetwork();
-    
-    // Add debug commands to console
-    console.log('YN Young Network loaded! Debug commands available:');
-    console.log('- window.youngNetwork.getDebugInfo() - Get debug information');
-    console.log('- window.youngNetwork.exportData() - Export debug data');
-    console.log('- window.youngNetwork.log("message", "level") - Add custom log');
-    console.log('- window.youngNetwork.testRealTime() - Test real-time features');
-    console.log('- window.youngNetwork.getConnectionStatus() - Check Supabase connection');
+    new YoungNetwork();
 });
 
 // Add test function to window object

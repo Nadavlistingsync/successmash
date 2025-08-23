@@ -67,7 +67,25 @@
             <span class="nav-icon">➕</span>
             + Add Profile
         </button>
+        <button class="nav-btn" data-view="analytics">
+            <span class="nav-icon">📈</span>
+            Analytics
+        </button>
     </nav>
+
+    <!-- Industry Filter -->
+    <div class="industry-filter">
+        <label for="industry-select">Filter by Industry:</label>
+        <select id="industry-select">
+            <option value="">All Industries</option>
+            <option value="technology">Technology</option>
+            <option value="business">Business</option>
+            <option value="finance">Finance</option>
+            <option value="creative">Creative</option>
+            <option value="healthcare">Healthcare</option>
+            <option value="education">Education</option>
+        </select>
+    </div>
 
     <main class="main">
         <!-- Compare View -->
@@ -171,6 +189,38 @@
                 <button type="submit" class="submit-btn">Add Profile</button>
             </form>
         </div>
+
+        <!-- Analytics View -->
+        <div id="analytics-view" class="view">
+            <h2>📈 Analytics Dashboard</h2>
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <h3>Industry Distribution</h3>
+                    <div id="industry-chart" class="chart-container"></div>
+                </div>
+                <div class="analytics-card">
+                    <h3>Voting Trends</h3>
+                    <div id="voting-trends" class="chart-container"></div>
+                </div>
+                <div class="analytics-card">
+                    <h3>Top Achievements</h3>
+                    <div id="achievements-list" class="achievements-container"></div>
+                </div>
+                <div class="analytics-card">
+                    <h3>Social Sharing</h3>
+                    <div class="social-sharing">
+                        <button onclick="window.youngNetwork?.shareResults()" class="share-btn">
+                            <span class="share-icon">📤</span>
+                            Share Results
+                        </button>
+                        <button onclick="window.youngNetwork?.exportAnalytics()" class="export-btn">
+                            <span class="export-icon">📊</span>
+                            Export Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- Modal for vote results -->
@@ -178,41 +228,20 @@
         <div class="modal-content">
             <h3 id="modal-title">Vote Recorded!</h3>
             <p id="modal-message">The comparison has been recorded.</p>
+            <div class="social-sharing-modal">
+                <button onclick="window.youngNetwork?.shareVoteResult()" class="share-btn">
+                    <span class="share-icon">📤</span>
+                    Share This Result
+                </button>
+            </div>
         </div>
     </div>
 
-<<<<<<< Updated upstream
-    <!-- Load Supabase via CDN -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script>
-        console.log("🔄 Loading Supabase via CDN...");
-        
-        // Wait for CDN to load
-        setTimeout(() => {
-            try {
-                if (window.supabase && window.supabase.createClient) {
-                    console.log("✅ CDN loaded successfully");
-                    window.__supabase = window.supabase.createClient(
-                        "https://nubqazryyrougsyestiw.supabase.co",
-                        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51YnFhenJ5cnJvdWdzeWVzdGl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU1NDczMzksImV4cCI6MjA3MTEyMzMzOX0.gGdt11cb6eRk7qvfbLK0tAYpxz3zZphQLhEYl3KkdIk"
-                    );
-                    console.log("✅ Supabase client created");
-                    console.log("✅ window.__supabase is available:", typeof window.__supabase);
-                } else {
-                    console.error("❌ Supabase CDN not loaded");
-                }
-            } catch (error) {
-                console.error("❌ CDN loading failed:", error);
-            }
-        }, 1000);
-    </script>    <script src="script.js?v=20250820-13"></script>
-=======
     <footer class="footer">
         <p>&copy; 2024 YN Young Network. Compare and build your professional network.</p>
     </footer>
 
     <!-- Load scripts with cache busting -->
     <script type="module" src="script.js?v=20250820-13"></script>
->>>>>>> Stashed changes
 </body>
 </html>
